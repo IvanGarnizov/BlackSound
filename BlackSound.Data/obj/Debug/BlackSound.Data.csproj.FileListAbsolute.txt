@@ -1,0 +1,7 @@
+C:\Users\ASUS\Documents\git\BlackSound\BlackSound.Data\bin\Debug\BlackSound.Data.dll
+C:\Users\ASUS\Documents\git\BlackSound\BlackSound.Data\bin\Debug\BlackSound.Data.pdb
+C:\Users\ASUS\Documents\git\BlackSound\BlackSound.Data\bin\Debug\BlackSound.Models.dll
+C:\Users\ASUS\Documents\git\BlackSound\BlackSound.Data\bin\Debug\BlackSound.Models.pdb
+C:\Users\ASUS\Documents\git\BlackSound\BlackSound.Data\obj\Debug\BlackSound.Data.csprojResolveAssemblyReference.cache
+C:\Users\ASUS\Documents\git\BlackSound\BlackSound.Data\obj\Debug\BlackSound.Data.dll
+C:\Users\ASUS\Documents\git\BlackSound\BlackSound.Data\obj\Debug\BlackSound.Data.pdb

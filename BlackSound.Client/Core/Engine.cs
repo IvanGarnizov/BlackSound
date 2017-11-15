@@ -27,11 +27,19 @@
                 switch (command)
                 {
                     case "CreateSong":
-                        this.controller.CreateSong(arguments);
+                        this.controller.Create(arguments);
 
                         break;
                     case "ReadSongs":
-                        this.controller.ReadSongs();
+                        this.controller.Read();
+
+                        break;
+                    case "UpdateSong":
+                        this.controller.Update(arguments);
+
+                        break;
+                    case "DeleteSong":
+                        this.controller.Delete(arguments);
 
                         break;
                 }
