@@ -1,16 +1,21 @@
 ﻿namespace BlackSound.Client.Core
 {
+    using BlackSound.Client.Core.Controllers;
     using System;
     using System.Linq;
 
     public class Engine
     {
         private string input;
-        private BlackSoundController controller;
+        private SongsController songsController;
+        private PlaylistsController playlistsController;
+        private UsersController usersController;
 
         public Engine()
         {
-            this.controller = new BlackSoundController();
+            this.songsController = new SongsController();
+            this.playlistsController = new PlaylistsController();
+            this.usersController = new UsersController();
         }
 
         public void Run()
@@ -27,19 +32,19 @@
                 switch (command)
                 {
                     case "CreateSong":
-                        this.controller.Create(arguments);
+                        this.songsController.Create(arguments);
 
                         break;
                     case "ReadSongs":
-                        this.controller.Read();
+                        this.songsController.Read();
 
                         break;
                     case "UpdateSong":
-                        this.controller.Update(arguments);
+                        this.songsController.Update(arguments);
 
                         break;
                     case "DeleteSong":
-                        this.controller.Delete(arguments);
+                        this.songsController.Delete(arguments);
 
                         break;
                 }

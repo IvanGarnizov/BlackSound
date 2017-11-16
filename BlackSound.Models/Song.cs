@@ -2,15 +2,11 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Threading;
 
     public class Song
     {
-        private static int id;
-
         public Song()
         {
-            this.Id = Interlocked.Increment(ref id);
             this.ArtistsNames = new List<string>();
             this.Playlists = new List<Playlist>();
         }

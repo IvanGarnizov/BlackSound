@@ -43,7 +43,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BlackSoundMain.cs" />
-    <Compile Include="Core\BlackSoundController.cs" />
+    <Compile Include="Core\Controllers\BlackSoundController.cs" />
+    <Compile Include="Core\Controllers\PlaylistsController.cs" />
+    <Compile Include="Core\Controllers\SongsController.cs" />
+    <Compile Include="Core\Controllers\UsersController.cs" />
     <Compile Include="Core\Engine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

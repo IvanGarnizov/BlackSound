@@ -6,41 +6,31 @@
     using System.IO;
 
     using Models;
+    using Newtonsoft.Json;
 
     public class BlackSoundContext
     {
-        private const string UsersPath = "../../../BlackSound.Data/users.txt";
-        private const string PlaylistsPath = "../../../BlackSound.Data/playlists.txt";
-        private const string SongsPath = "../../../BlackSound.Data/songs.txt";
-        private const string TemporaryPath = "../../../BlackSound.Data/temporary.txt";
+        private const string UsersPath = "../../../BlackSound.Data/users.json";
+        private const string PlaylistsPath = "../../../BlackSound.Data/playlists.json";
+        private const string SongsPath = "../../../BlackSound.Data/songs.json";
 
         private List<Song> songs;
 
         public BlackSoundContext()
         {
-            this.songs = new List<Song>();
+            this.Songs = new List<Song>();
         }
 
         public List<Song> Songs
         {
             get
             {
-                foreach (var record in File.ReadAllLines(SongsPath))
+                if (File.Exists(SongsPath))
                 {
-                    string[] parts = record.Split(',');
-                    int id = int.Parse(parts[0].Split(' ')[1]);
-                    string title = parts[1].Split(' ')[1];
-                    int year = int.Parse(parts[2].Split(' ')[1]);
-
-                    this.songs.Add(new Song()
-                    {
-                        Id = id,
-                        Title = title,
-                        Year = year
-                    });
+                    return JsonConvert.DeserializeObject<List<Song>>(File.ReadAllText(SongsPath));
                 }
 
-                return songs;
+                return new List<Song>();
             }
 
             set
@@ -49,50 +39,26 @@
             }
         }
 
-        public string ReadSongs()
+        public void SaveChanges(List<Song> songs = null, List<Playlist> playlists = null, List<User> users = null)
         {
-            return String.Join(Environment.NewLine, this.Songs.Select(s => s.ToString()));
-        }
-
-        public void CreateSong(Song song)
-        {
-            this.Songs.Add(song);
-        }
-
-        public bool SongExists(int id)
-        {
-            foreach (var record in File.ReadAllLines(SongsPath))
+            if (songs != null)
             {
-                string idPair = record.Split(',')[0];
-                int songId = int.Parse(idPair.Split(' ')[1]);
+                var json = JsonConvert.SerializeObject(songs, Formatting.Indented);
 
-                if (id == songId)
-                {
-                    return true;
-                }
+                File.WriteAllText(SongsPath, json);
             }
-
-            return false;
-        }
-
-        public void DeleteSong(int id)
-        {
-            var song = this.Songs
-                .FirstOrDefault(s => s.Id == id);
-
-            this.Songs.Remove(song);
-        }
-
-        public void SaveChanges()
-        {
-            File.WriteAllText(TemporaryPath, this.ReadSongs());
-
-            if (File.Exists(SongsPath))
+            else if (playlists != null)
             {
-                File.Delete(SongsPath);
-            }
+                var json = JsonConvert.SerializeObject(playlists, Formatting.Indented);
 
-            File.Move(TemporaryPath, SongsPath);
+                File.WriteAllText(PlaylistsPath, json);
+            }
+            else if (users != null)
+            {
+                var json = JsonConvert.SerializeObject(users, Formatting.Indented);
+
+                File.WriteAllText(UsersPath, json);
+            }
         }
     }
 }
