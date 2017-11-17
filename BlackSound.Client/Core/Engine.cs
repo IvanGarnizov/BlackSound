@@ -24,7 +24,7 @@
 
             while (input != "stop")
             {
-                var arguments = input.Split(' ').ToList();
+                var arguments = input.Split(',').ToList();
                 string command = arguments[0];
 
                 arguments.RemoveAt(0);
@@ -45,6 +45,53 @@
                         break;
                     case "DeleteSong":
                         this.songsController.Delete(arguments);
+
+                        break;
+                    case "CreatePlaylist":
+                        this.playlistsController.Create(arguments);
+
+                        break;
+                    case "ReadPlaylists":
+                        this.playlistsController.Read();
+
+                        break;
+                    case "UpdatePlaylist":
+                        this.playlistsController.Update(arguments);
+
+                        break;
+                    case "DeletePlaylist":
+                        this.playlistsController.Delete(arguments);
+
+                        break;
+                    case "SharePlaylist":
+                        this.playlistsController.Share(arguments);
+
+                        break;
+                    case "Register":
+                        this.usersController.Register(arguments);
+
+                        break;
+                    case "Login":
+                        this.usersController.Login(arguments);
+
+                        break;
+                    case "Logout":
+                        this.usersController.Logout();
+
+                        break;
+                    case "CurrentUser":
+                        if (this.usersController.CurrentUser != null)
+                        {
+                            Console.WriteLine(this.usersController.CurrentUser.Email);
+                        }
+                        else
+                        {
+                            Console.WriteLine("There is noone logged in.");
+                        }
+
+                        break;
+                    default:
+                        Console.WriteLine($"Command {command} is not supported.");
 
                         break;
                 }

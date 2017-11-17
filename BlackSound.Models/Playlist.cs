@@ -5,12 +5,9 @@
 
     public class Playlist
     {
-        private static int id;
-
         public Playlist()
         {
-            this.Id = Interlocked.Increment(ref id);
-            this.Songs = new List<Song>();
+            this.SongIds = new List<int>();
         }
 
         public int Id { get; set; }
@@ -21,15 +18,11 @@
 
         public bool IsPublic { get; set; }
 
-        public int UserId { get; set; }
-
-        public User User { get; set; }
-
-        public ICollection<Song> Songs { get; set; }
+        public ICollection<int> SongIds { get; set; }
 
         public override string ToString()
         {
-            return $"Id: {this.Id}, Name: {this.Name}, Description: {this.Description}, Open: {(this.IsPublic ? "Yes" : "No")}";
+            return $"Id: {this.Id}, Name: {this.Name}, Description: {this.Description}, Public: {(this.IsPublic ? "Yes" : "No")}";
         }
     }
 }

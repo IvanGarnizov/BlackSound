@@ -10,7 +10,7 @@
         public User()
         {
             this.Id = Interlocked.Increment(ref id);
-            this.Playlists = new List<Playlist>();
+            this.PlaylistIds = new List<int>();
         }
 
         public int Id { get; set; }
@@ -23,7 +23,7 @@
 
         public bool IsAdministrator { get; set; }
 
-        public ICollection<Playlist> Playlists { get; set; }
+        public ICollection<int> PlaylistIds { get; set; }
 
         public override string ToString()
         {

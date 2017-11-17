@@ -20,11 +20,14 @@
 
             string title = arguments[0];
             int year = int.Parse(arguments[1]);
+            List<string> artistsNames = arguments[2].Split(' ').ToList();
+
             var song = new Song()
             {
                 Id = ++lastId,
                 Title = title,
-                Year = year
+                Year = year,
+                ArtistsNames = artistsNames
             };
 
             songs.Add(song);
@@ -64,6 +67,8 @@
 
                 string title = String.Empty;
                 int year = 0;
+                var artistsNames = new List<string>();
+                bool hasIncorrectField = false;
 
                 foreach (var pair in arguments)
                 {
@@ -84,11 +89,13 @@
 
                                 break;
                             case "Artists":
-
+                                artistsNames = value.Split(' ').ToList();
 
                                 break;
                             default:
-                                Console.WriteLine($"There is no such field {field} in a song.");
+                                Console.WriteLine($"Field {field} is not present in a song.");
+
+                                hasIncorrectField = true;
 
                                 break;
                         }
@@ -96,22 +103,34 @@
                     else
                     {
                         Console.WriteLine("An argument is not in correct format. The correct format is {field}=value, where {field} stands for [Title, Year or Artists]");
+
+                        hasIncorrectField = true;
+
+                        break;
                     }
                 }
 
-                if (!String.IsNullOrEmpty(title))
+                if (!hasIncorrectField)
                 {
-                    song.Title = title;
+                    if (!String.IsNullOrEmpty(title))
+                    {
+                        song.Title = title;
+                    }
+
+                    if (year != 0)
+                    {
+                        song.Year = year;
+                    }
+
+                    if (artistsNames.Count > 0)
+                    {
+                        song.ArtistsNames = artistsNames;
+                    }
+
+                    this.SaveChanges(songs);
+
+                    Console.WriteLine($"Song {song.Title} successfully updated.");
                 }
-
-                if (year != 0)
-                {
-                    song.Year = year;
-                }
-
-                this.SaveChanges(songs);
-
-                Console.WriteLine($"Song {song.Title} successfully updated.");
             }
             else
             {
@@ -131,6 +150,8 @@
                 songs.Remove(song);
 
                 this.SaveChanges(songs);
+
+                Console.WriteLine($"Song {song.Title} successfully deleted.");
             }
             else
             {

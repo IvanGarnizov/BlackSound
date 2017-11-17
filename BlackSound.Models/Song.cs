@@ -8,7 +8,6 @@
         public Song()
         {
             this.ArtistsNames = new List<string>();
-            this.Playlists = new List<Playlist>();
         }
 
         public int Id { get; set; }
@@ -18,8 +17,6 @@
         public int Year { get; set; }
 
         public ICollection<string> ArtistsNames { get; set; }
-
-        public ICollection<Playlist> Playlists { get; set; }
 
         public override string ToString()
         {

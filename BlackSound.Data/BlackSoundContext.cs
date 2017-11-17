@@ -15,10 +15,13 @@
         private const string SongsPath = "../../../BlackSound.Data/songs.json";
 
         private List<Song> songs;
+        private List<Playlist> playlists;
+        private List<User> users;
 
         public BlackSoundContext()
         {
             this.Songs = new List<Song>();
+            this.Playlists = new List<Playlist>();
         }
 
         public List<Song> Songs
@@ -36,6 +39,42 @@
             set
             {
                 this.songs = value;
+            }
+        }
+
+        public List<Playlist> Playlists
+        {
+            get
+            {
+                if (File.Exists(PlaylistsPath))
+                {
+                    return JsonConvert.DeserializeObject<List<Playlist>>(File.ReadAllText(PlaylistsPath));
+                }
+
+                return new List<Playlist>();
+            }
+
+            set
+            {
+                this.playlists = value;
+            }
+        }
+
+        public List<User> Users
+        {
+            get
+            {
+                if (File.Exists(UsersPath))
+                {
+                    return JsonConvert.DeserializeObject<List<User>>(File.ReadAllText(UsersPath));
+                }
+
+                return new List<User>();
+            }
+
+            set
+            {
+                this.users = value;
             }
         }
 
