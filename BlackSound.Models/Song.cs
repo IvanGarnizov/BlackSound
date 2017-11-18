@@ -20,7 +20,7 @@
 
         public override string ToString()
         {
-            return $"Id: {this.Id}, Title: {this.Title}, Year: {this.Year}, Artists: {String.Join(" - ", this.ArtistsNames)}";
+            return $"~~~~~~~~~~~~~~\nId: {this.Id}\nTitle: {this.Title}\nYear: {this.Year}\nArtists: {String.Join(", ", this.ArtistsNames)}\n~~~~~~~~~~~~~~";
         }
     }
 }

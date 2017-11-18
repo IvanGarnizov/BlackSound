@@ -14,68 +14,34 @@
         private const string PlaylistsPath = "../../../BlackSound.Data/playlists.json";
         private const string SongsPath = "../../../BlackSound.Data/songs.json";
 
-        private List<Song> songs;
-        private List<Playlist> playlists;
-        private List<User> users;
-
-        public BlackSoundContext()
+        public List<Song> GetSongs()
         {
-            this.Songs = new List<Song>();
-            this.Playlists = new List<Playlist>();
+            if (File.Exists(SongsPath))
+            {
+                return JsonConvert.DeserializeObject<List<Song>>(File.ReadAllText(SongsPath));
+            }
+
+            return new List<Song>();
         }
 
-        public List<Song> Songs
+        public List<Playlist> GetPlaylists()
         {
-            get
+            if (File.Exists(PlaylistsPath))
             {
-                if (File.Exists(SongsPath))
-                {
-                    return JsonConvert.DeserializeObject<List<Song>>(File.ReadAllText(SongsPath));
-                }
-
-                return new List<Song>();
+                return JsonConvert.DeserializeObject<List<Playlist>>(File.ReadAllText(PlaylistsPath));
             }
 
-            set
-            {
-                this.songs = value;
-            }
+            return new List<Playlist>();
         }
 
-        public List<Playlist> Playlists
+        public List<User> GetUsers()
         {
-            get
+            if (File.Exists(UsersPath))
             {
-                if (File.Exists(PlaylistsPath))
-                {
-                    return JsonConvert.DeserializeObject<List<Playlist>>(File.ReadAllText(PlaylistsPath));
-                }
-
-                return new List<Playlist>();
+                return JsonConvert.DeserializeObject<List<User>>(File.ReadAllText(UsersPath));
             }
 
-            set
-            {
-                this.playlists = value;
-            }
-        }
-
-        public List<User> Users
-        {
-            get
-            {
-                if (File.Exists(UsersPath))
-                {
-                    return JsonConvert.DeserializeObject<List<User>>(File.ReadAllText(UsersPath));
-                }
-
-                return new List<User>();
-            }
-
-            set
-            {
-                this.users = value;
-            }
+            return new List<User>();
         }
 
         public void SaveChanges(List<Song> songs = null, List<Playlist> playlists = null, List<User> users = null)
@@ -86,18 +52,37 @@
 
                 File.WriteAllText(SongsPath, json);
             }
-            else if (playlists != null)
+
+            if (playlists != null)
             {
                 var json = JsonConvert.SerializeObject(playlists, Formatting.Indented);
 
                 File.WriteAllText(PlaylistsPath, json);
             }
-            else if (users != null)
+
+            if (users != null)
             {
                 var json = JsonConvert.SerializeObject(users, Formatting.Indented);
 
                 File.WriteAllText(UsersPath, json);
             }
+        }
+
+        public List<Song> GetSongsForPlaylist(int playlistId)
+        {
+            var playlist = this.GetPlaylists()
+                .First(p => p.Id == playlistId);
+            var songs = new List<Song>();
+
+            foreach (var songId in playlist.SongIds)
+            {
+                var song = this.GetSongs()
+                    .First(s => s.Id == songId);
+
+                songs.Add(song);
+            }
+
+            return songs;
         }
     }
 }

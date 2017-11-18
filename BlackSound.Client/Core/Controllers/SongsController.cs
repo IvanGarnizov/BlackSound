@@ -10,7 +10,7 @@
     {
         public void Create(List<string> arguments)
         {
-            var songs = this.Context.Songs;
+            var songs = this.Context.GetSongs();
             int lastId = 0;
 
             if (songs.Count > 0)
@@ -39,7 +39,7 @@
 
         public void Read()
         {
-            var songs = this.Context.Songs;
+            var songs = this.Context.GetSongs();
 
             if (songs.Count > 0)
             {
@@ -57,7 +57,7 @@
         public void Update(List<string> arguments)
         {
             int id = int.Parse(arguments[0]);
-            var songs = this.Context.Songs;
+            var songs = this.Context.GetSongs();
             var song = songs
                 .FirstOrDefault(s => s.Id == id);
 
@@ -141,7 +141,7 @@
         public void Delete(List<string> arguments)
         {
             int id = int.Parse(arguments[0]);
-            var songs = this.Context.Songs;
+            var songs = this.Context.GetSongs();
             var song = songs
                 .FirstOrDefault(s => s.Id == id);
 

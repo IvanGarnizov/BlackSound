@@ -1,7 +1,7 @@
 ﻿namespace BlackSound.Models
 {
     using System.Collections.Generic;
-    using System.Threading;
+    using System.Linq;
 
     public class Playlist
     {
@@ -18,11 +18,13 @@
 
         public bool IsPublic { get; set; }
 
+        public int UserId { get; set; }
+
         public ICollection<int> SongIds { get; set; }
 
         public override string ToString()
         {
-            return $"Id: {this.Id}, Name: {this.Name}, Description: {this.Description}, Public: {(this.IsPublic ? "Yes" : "No")}";
+            return $"~~~~~~~~~~~~~~\nId: {this.Id}\nName: {this.Name}\nDescription: {this.Description}\nPublic: {(this.IsPublic ? "Yes" : "No")}";
         }
     }
 }

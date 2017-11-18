@@ -8,9 +8,12 @@
 
     class PlaylistsController : BlackSoundController
     {
-        public void Create(List<string> arguments)
+        public void Create(List<string> arguments, int userId)
         {
-            var playlists = this.Context.Playlists;
+            var playlists = this.Context.GetPlaylists();
+            var users = this.Context.GetUsers();
+            var user = users
+                .First(u => u.Id == userId);
             int lastId = 0;
 
             if (playlists.Count > 0)
@@ -24,7 +27,8 @@
             {
                 Id = ++lastId,
                 Name = name,
-                Description = description
+                Description = description,
+                UserId = userId
             };
 
             playlists.Add(playlist);
@@ -36,7 +40,7 @@
 
         public void Read()
         {
-            var playlists = this.Context.Playlists
+            var playlists = this.Context.GetPlaylists()
                 .Where(p => p.IsPublic)
                 .ToList();
 
@@ -44,7 +48,9 @@
             {
                 foreach (var playlist in playlists)
                 {
-                    Console.WriteLine(playlist.ToString());
+                    var songs = this.Context.GetSongsForPlaylist(playlist.Id);
+
+                    Console.WriteLine(playlist.ToString() + "\nSongs: [" + String.Join(", ", songs.Select(s => $"{'"' + s.Title + '"'}")) + "]\n~~~~~~~~~~~~~~");
                 }
             }
             else
@@ -53,12 +59,12 @@
             }
         }
 
-        public void Update(List<string> arguments)
+        public void Update(List<string> arguments, int userId)
         {
             int id = int.Parse(arguments[0]);
-            var playlists = this.Context.Playlists;
+            var playlists = this.Context.GetPlaylists();
             var playlist = playlists
-                .FirstOrDefault(p => p.Id == id);
+                .FirstOrDefault(p => p.Id == id && p.UserId == userId);
 
             if (playlist != null)
             {
@@ -123,16 +129,16 @@
             }
             else
             {
-                Console.WriteLine($"Playlist with id {id} doesn't exist.");
+                Console.WriteLine($"Playlist with id {id} doesn't exist, or you're not the owner.");
             }
         }
 
-        public void Delete(List<string> arguments)
+        public void Delete(List<string> arguments, int userId)
         {
             int id = int.Parse(arguments[0]);
-            var playlists = this.Context.Playlists;
+            var playlists = this.Context.GetPlaylists();
             var playlist = playlists
-                .FirstOrDefault(s => s.Id == id);
+                .FirstOrDefault(p => p.Id == id && p.UserId == userId);
 
             if (playlist != null)
             {
@@ -144,16 +150,16 @@
             }
             else
             {
-                Console.WriteLine($"Playlist with id {id} doesn't exist.");
+                Console.WriteLine($"Playlist with id {id} doesn't exist, or you're not the owner.");
             }
         }
 
-        public void Share(List<string> arguments)
+        public void Share(List<string> arguments, int userId)
         {
             int id = int.Parse(arguments[0]);
-            var playlists = this.Context.Playlists;
+            var playlists = this.Context.GetPlaylists();
             var playlist = playlists
-                .FirstOrDefault(s => s.Id == id);
+                .FirstOrDefault(p => p.Id == id && p.UserId == userId);
 
             if (playlist != null)
             {
@@ -165,7 +171,73 @@
             }
             else
             {
-                Console.WriteLine($"Playlist with id {id} doesn't exist.");
+                Console.WriteLine($"Playlist with id {id} doesn't exist, or you're not the owner.");
+            }
+        }
+
+        public void AddSong(List<string> arguments, int userId)
+        {
+            int songId = int.Parse(arguments[0]);
+            var songs = this.Context.GetSongs();
+            var song = songs
+                .FirstOrDefault(s => s.Id == songId);
+
+            if (song != null)
+            {
+                int playlistId = int.Parse(arguments[1]);
+                var playlists = this.Context.GetPlaylists();
+                var playlist = playlists
+                    .FirstOrDefault(p => p.Id == playlistId && p.UserId == userId);
+
+                if (playlist != null)
+                {
+                    playlist.SongIds.Add(songId);
+
+                    this.SaveChanges(null, playlists);
+
+                    Console.WriteLine($"Song {song.Title} successfully added to playlist {playlist.Name}.");
+                }
+                else
+                {
+                    Console.WriteLine($"Playlist with id {playlistId} doesn't exist, or you're not the owner.");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Song with id {songId} doesn't exist.");
+            }
+        }
+
+        public void RemoveSong(List<string> arguments, int userId)
+        {
+            int songId = int.Parse(arguments[0]);
+            var songs = this.Context.GetSongs();
+            var song = songs
+                .FirstOrDefault(s => s.Id == songId);
+
+            if (song != null)
+            {
+                int playlistId = int.Parse(arguments[1]);
+                var playlists = this.Context.GetPlaylists();
+                var playlist = playlists
+                    .FirstOrDefault(p => p.Id == playlistId && p.UserId == userId);
+
+                if (playlist != null)
+                {
+                    playlist.SongIds.Remove(songId);
+
+                    this.SaveChanges(null, playlists);
+
+                    Console.WriteLine($"Song {song.Title} successfully removed from playlist {playlist.Name}.");
+                }
+                else
+                {
+                    Console.WriteLine($"Playlist with id {playlistId} doesn't exist, or you're not the owner.");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Song with id {songId} doesn't exist.");
             }
         }
     }
