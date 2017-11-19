@@ -1,8 +1,9 @@
 ﻿namespace BlackSound.Client.Core
 {
-    using BlackSound.Client.Core.Controllers;
     using System;
     using System.Linq;
+
+    using Core.Controllers;
 
     public class Engine
     {
@@ -34,14 +35,13 @@
                     case "CreateSong":
                         if (arguments.Count == 3)
                         {
-                            if (this.usersController.CurrentUser == null ||
-                                (this.usersController.CurrentUser != null && !this.usersController.CurrentUser.IsAdministrator))
+                            if (this.IsAdmin())
                             {
-                                Console.WriteLine("You need to login or be an admin, to be able to publish songs.");
+                                this.songsController.Create(arguments);
                             }
                             else
                             {
-                                this.songsController.Create(arguments);
+                                Console.WriteLine("You need to login and be an admin, to be able to publish songs.");
                             }
                         }
                         else
@@ -53,14 +53,13 @@
                     case "ReadSongs":
                         if (arguments.Count == 0)
                         {
-                            if (this.usersController.CurrentUser == null ||
-                                (this.usersController.CurrentUser != null && !this.usersController.CurrentUser.IsAdministrator))
+                            if (this.IsAdmin())
                             {
-                                Console.WriteLine("You need to login or be an admin, to be able to read songs.");
+                                this.songsController.Read();
                             }
                             else
                             {
-                                this.songsController.Read();
+                                Console.WriteLine("You need to login and be an admin, to be able to read songs.");
                             }
                         }
                         else
@@ -72,14 +71,13 @@
                     case "UpdateSong":
                         if (1 < arguments.Count && arguments.Count <= 4)
                         {
-                            if (this.usersController.CurrentUser == null ||
-                                (this.usersController.CurrentUser != null && !this.usersController.CurrentUser.IsAdministrator))
+                            if (this.IsAdmin())
                             {
-                                Console.WriteLine("You need to login or be an admin, to be able to update songs.");
+                                this.songsController.Update(arguments);
                             }
                             else
                             {
-                                this.songsController.Update(arguments);
+                                Console.WriteLine("You need to login and be an admin, to be able to update songs.");
                             }
                         }
                         else
@@ -91,14 +89,13 @@
                     case "DeleteSong":
                         if (arguments.Count == 1)
                         {
-                            if (this.usersController.CurrentUser == null ||
-                                (this.usersController.CurrentUser != null && !this.usersController.CurrentUser.IsAdministrator))
+                            if (this.IsAdmin())
                             {
-                                Console.WriteLine("You need to login or be an admin, to be able to delete songs.");
+                                this.songsController.Delete(arguments);
                             }
                             else
                             {
-                                this.songsController.Delete(arguments);
+                                Console.WriteLine("You need to login and be an admin, to be able to delete songs.");
                             }
                         }
                         else
@@ -110,13 +107,13 @@
                     case "CreatePlaylist":
                         if (arguments.Count == 2)
                         {
-                            if (this.usersController.CurrentUser == null)
+                            if (this.IsLoggedIn())
                             {
-                                Console.WriteLine("You need to login, to be able to create playlists.");
+                                this.playlistsController.Create(arguments, this.usersController.CurrentUser.Id);
                             }
                             else
                             {
-                                this.playlistsController.Create(arguments, this.usersController.CurrentUser.Id);
+                                Console.WriteLine("You need to login to be able to create playlists.");
                             }
                         }
                         else
@@ -128,13 +125,13 @@
                     case "ReadPlaylists":
                         if (arguments.Count == 0)
                         {
-                            if (this.usersController.CurrentUser == null)
+                            if (this.IsLoggedIn())
                             {
-                                Console.WriteLine("You need to login, to be able to read playlists.");
+                                this.playlistsController.Read();
                             }
                             else
                             {
-                                this.playlistsController.Read();
+                                Console.WriteLine("You need to login to be able to read playlists.");
                             }
                         }
                         else
@@ -146,13 +143,13 @@
                     case "UpdatePlaylist":
                         if (1 < arguments.Count && arguments.Count <= 3)
                         {
-                            if (this.usersController.CurrentUser == null)
+                            if (this.IsLoggedIn())
                             {
-                                Console.WriteLine("You need to login, to be able to update your playlists.");
+                                this.playlistsController.Update(arguments, this.usersController.CurrentUser.Id);
                             }
                             else
                             {
-                                this.playlistsController.Update(arguments, this.usersController.CurrentUser.Id);
+                                Console.WriteLine("You need to login to be able to update your playlists.");
                             }
                         }
                         else
@@ -160,18 +157,17 @@
                             Console.WriteLine("Between 2 and 3 arguments are expected - the id is mandatory, the next arguments are the fields you wish to update - name or description.");
                         }
 
-
                         break;
                     case "DeletePlaylist":
                         if (arguments.Count == 1)
                         {
-                            if (this.usersController.CurrentUser == null)
+                            if (this.IsLoggedIn())
                             {
-                                Console.WriteLine("You need to login, to be able to delete your playlists.");
+                                this.playlistsController.Delete(arguments, this.usersController.CurrentUser.Id);
                             }
                             else
                             {
-                                this.playlistsController.Delete(arguments, this.usersController.CurrentUser.Id);
+                                Console.WriteLine("You need to login to be able to delete your playlists.");
                             }
                         }
                         else
@@ -183,13 +179,13 @@
                     case "SharePlaylist":
                         if (arguments.Count == 1)
                         {
-                            if (this.usersController.CurrentUser == null)
+                            if (this.IsLoggedIn())
                             {
-                                Console.WriteLine("You need to login, to be able to share your playlists.");
+                                this.playlistsController.Share(arguments, this.usersController.CurrentUser.Id);
                             }
                             else
                             {
-                                this.playlistsController.Share(arguments, this.usersController.CurrentUser.Id);
+                                Console.WriteLine("You need to login to be able to share your playlists.");
                             }
                         }
                         else
@@ -201,13 +197,13 @@
                     case "AddSongToPlaylist":
                         if (arguments.Count == 2)
                         {
-                            if (this.usersController.CurrentUser == null)
+                            if (this.IsLoggedIn())
                             {
-                                Console.WriteLine("You need to login, to be able to add songs to your playlists.");
+                                this.playlistsController.AddSong(arguments, this.usersController.CurrentUser.Id);
                             }
                             else
                             {
-                                this.playlistsController.AddSong(arguments, this.usersController.CurrentUser.Id);
+                                Console.WriteLine("You need to login to be able to add songs to your playlists.");
                             }
                         }
                         else
@@ -219,13 +215,13 @@
                     case "RemoveSongFromPlaylist":
                         if (arguments.Count == 2)
                         {
-                            if (this.usersController.CurrentUser == null)
+                            if (this.IsLoggedIn())
                             {
-                                Console.WriteLine("You need to login, to be able to remove songs from your playlists.");
+                                this.playlistsController.RemoveSong(arguments, this.usersController.CurrentUser.Id);
                             }
                             else
                             {
-                                this.playlistsController.RemoveSong(arguments, this.usersController.CurrentUser.Id);
+                                Console.WriteLine("You need to login to be able to remove songs from your playlists.");
                             }
                         }
                         else
@@ -237,7 +233,7 @@
                     case "Register":
                         if (2 < arguments.Count && arguments.Count <= 4)
                         {
-                            if (this.usersController.CurrentUser != null)
+                            if (this.IsLoggedIn())
                             {
                                 Console.WriteLine("There is already someone logged in.");
                             }
@@ -255,7 +251,7 @@
                     case "Login":
                         if (arguments.Count == 2)
                         {
-                            if (this.usersController.CurrentUser != null)
+                            if (this.IsLoggedIn())
                             {
                                 Console.WriteLine("There is already someone logged in.");
                             }
@@ -273,13 +269,13 @@
                     case "Logout":
                         if (arguments.Count == 0)
                         {
-                            if (this.usersController.CurrentUser == null)
+                            if (this.IsLoggedIn())
                             {
-                                Console.WriteLine("There is noone logged in.");
+                                this.usersController.Logout();
                             }
                             else
                             {
-                                this.usersController.Logout();
+                                Console.WriteLine("There is noone logged in.");
                             }
                         }
                         else
@@ -291,7 +287,7 @@
                     case "CurrentUser":
                         if (arguments.Count == 0)
                         {
-                            if (this.usersController.CurrentUser != null)
+                            if (this.IsLoggedIn())
                             {
                                 Console.WriteLine(this.usersController.CurrentUser.Email);
                             }
@@ -314,6 +310,26 @@
 
                 input = Console.ReadLine();
             }
+        }
+
+        private bool IsLoggedIn()
+        {
+            if (this.usersController.CurrentUser != null)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool IsAdmin()
+        {
+            if (this.IsLoggedIn() && this.usersController.CurrentUser.IsAdministrator)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

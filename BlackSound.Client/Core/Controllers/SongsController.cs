@@ -56,107 +56,114 @@
 
         public void Update(List<string> arguments)
         {
-            int id = int.Parse(arguments[0]);
-            var songs = this.Context.GetSongs();
-            var song = songs
-                .FirstOrDefault(s => s.Id == id);
-
-            if (song != null)
+            if (this.IsInteger(arguments[0], out int id, "Id"))
             {
-                arguments.RemoveAt(0);
-
-                string title = String.Empty;
-                int year = 0;
-                var artistsNames = new List<string>();
-                bool hasIncorrectField = false;
-
-                foreach (var pair in arguments)
+                var songs = this.Context.GetSongs();
+                
+                if (this.Exists(id, songs, out Song song))
                 {
-                    if (pair.Contains("="))
+                    arguments.RemoveAt(0);
+
+                    string title = String.Empty;
+                    int year = 0;
+                    var artistsNames = new List<string>();
+                    bool hasIncorrectField = false;
+
+                    foreach (var pair in arguments)
                     {
-                        string[] parts = pair.Split('=');
-                        string field = parts[0];
-                        string value = parts[1];
-
-                        switch (field)
+                        if (pair.Contains("="))
                         {
-                            case "Title":
-                                title = value;
+                            string[] parts = pair.Split('=');
+                            string field = parts[0];
+                            string value = parts[1];
 
-                                break;
-                            case "Year":
-                                year = int.Parse(value);
+                            switch (field)
+                            {
+                                case "Title":
+                                    title = value;
 
-                                break;
-                            case "Artists":
-                                artistsNames = value.Split(' ').ToList();
+                                    break;
+                                case "Year":
+                                    year = int.Parse(value);
 
-                                break;
-                            default:
-                                Console.WriteLine($"Field {field} is not present in a song.");
+                                    break;
+                                case "Artists":
+                                    artistsNames = value.Split(' ').ToList();
 
-                                hasIncorrectField = true;
+                                    break;
+                                default:
+                                    Console.WriteLine($"Field {field} is not present in a song.");
 
-                                break;
+                                    hasIncorrectField = true;
+
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("An argument is not in correct format. The correct format is {field}=value, where {field} stands for [Title, Year or Artists]");
+
+                            hasIncorrectField = true;
+
+                            break;
                         }
                     }
-                    else
+
+                    if (!hasIncorrectField)
                     {
-                        Console.WriteLine("An argument is not in correct format. The correct format is {field}=value, where {field} stands for [Title, Year or Artists]");
+                        if (!String.IsNullOrEmpty(title))
+                        {
+                            song.Title = title;
+                        }
 
-                        hasIncorrectField = true;
+                        if (year != 0)
+                        {
+                            song.Year = year;
+                        }
 
-                        break;
+                        if (artistsNames.Count > 0)
+                        {
+                            song.ArtistsNames = artistsNames;
+                        }
+
+                        this.SaveChanges(songs);
+
+                        Console.WriteLine($"Song {song.Title} successfully updated.");
                     }
                 }
-
-                if (!hasIncorrectField)
-                {
-                    if (!String.IsNullOrEmpty(title))
-                    {
-                        song.Title = title;
-                    }
-
-                    if (year != 0)
-                    {
-                        song.Year = year;
-                    }
-
-                    if (artistsNames.Count > 0)
-                    {
-                        song.ArtistsNames = artistsNames;
-                    }
-
-                    this.SaveChanges(songs);
-
-                    Console.WriteLine($"Song {song.Title} successfully updated.");
-                }
-            }
-            else
-            {
-                Console.WriteLine($"Song with id {id} doesn't exist.");
             }
         }
 
         public void Delete(List<string> arguments)
         {
-            int id = int.Parse(arguments[0]);
-            var songs = this.Context.GetSongs();
-            var song = songs
+            if (this.IsInteger(arguments[0], out int id, "Id"))
+            {
+                var songs = this.Context.GetSongs();
+
+                if (this.Exists(id, songs, out Song song))
+                {
+                    songs.Remove(song);
+
+                    this.SaveChanges(songs);
+
+                    Console.WriteLine($"Song {song.Title} successfully deleted.");
+                }
+            }
+        }
+
+        private bool Exists(int id, List<Song> songs, out Song song)
+        {
+            song = songs
                 .FirstOrDefault(s => s.Id == id);
 
-            if (song != null)
-            {
-                songs.Remove(song);
-
-                this.SaveChanges(songs);
-
-                Console.WriteLine($"Song {song.Title} successfully deleted.");
-            }
-            else
+            if (song == null)
             {
                 Console.WriteLine($"Song with id {id} doesn't exist.");
+
+                return false;
             }
+
+            return true;
         }
     }
 }
