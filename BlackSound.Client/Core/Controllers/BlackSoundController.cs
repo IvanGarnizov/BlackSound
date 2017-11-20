@@ -20,17 +20,5 @@
         {
             this.Context.SaveChanges(songs, playlists, users);
         }
-
-        protected bool IsInteger(string value, out int number, string name)
-        {
-            if (int.TryParse(value, out number))
-            {
-                return true;
-            }
-
-            Console.WriteLine($"{name} is not an integer.");
-
-            return false;
-        }
     }
 }

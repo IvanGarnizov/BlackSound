@@ -6,6 +6,8 @@
 
     using Models;
 
+    using Utility;
+
     class PlaylistsController : BlackSoundController
     {
         public void Create(List<string> arguments, int userId)
@@ -38,36 +40,31 @@
             Console.WriteLine($"Playlist {name} successfully created.");
         }
 
-        public void Read()
+        public void Read(List<string> arguments)
         {
-            var playlists = this.Context.GetPlaylists()
-                .Where(p => p.IsPublic)
-                .ToList();
+            string name = arguments[0];
+            var playlist = this.Context.GetPlaylists()
+                .First(p => p.IsPublic && p.Name == name);
 
-            if (playlists.Count > 0)
+            if (playlist != null)
             {
-                foreach (var playlist in playlists)
-                {
-                    var songs = this.Context.GetSongsForPlaylist(playlist.Id);
+                var songs = this.Context.GetSongsForPlaylist(playlist.Id);
 
-                    Console.WriteLine(playlist.ToString() + "\nSongs: [" + String.Join(", ", songs.Select(s => $"{'"' + s.Title + '"'}")) + "]\n~~~~~~~~~~~~~~");
-                }
+                Console.WriteLine(playlist.ToString() + "\nSongs: [" + String.Join(", ", songs.Select(s => $"{'"' + s.Title + '"'}")) + "]\n~~~~~~~~~~~~~~");
             }
             else
             {
-                Console.WriteLine("There are no playlists registered, or no public playlists.");
+                Console.WriteLine("There are no playlist with this name registered or it's not public.");
             }
         }
 
         public void Update(List<string> arguments, int userId)
         {
-            if (this.IsInteger(arguments[0], out int id, "Id"))
+            if (Validator.IsInteger(arguments[0], out int id, "Id"))
             {
                 var playlists = this.Context.GetPlaylists();
-                var playlist = playlists
-                    .FirstOrDefault(p => p.Id == id && p.UserId == userId);
 
-                if (playlist != null)
+                if (Validator.PlaylistExists(id, userId, playlists, out Playlist playlist))
                 {
                     arguments.RemoveAt(0);
 
@@ -128,22 +125,16 @@
                         Console.WriteLine($"Playlist {playlist.Name} successfully updated.");
                     }
                 }
-                else
-                {
-                    Console.WriteLine($"Playlist with id {id} doesn't exist, or you're not the owner.");
-                }
             }
         }
 
         public void Delete(List<string> arguments, int userId)
         {
-            if (this.IsInteger(arguments[0], out int id, "Id"))
+            if (Validator.IsInteger(arguments[0], out int id, "Id"))
             {
                 var playlists = this.Context.GetPlaylists();
-                var playlist = playlists
-                    .FirstOrDefault(p => p.Id == id && p.UserId == userId);
 
-                if (playlist != null)
+                if (Validator.PlaylistExists(id, userId, playlists, out Playlist playlist))
                 {
                     playlists.Remove(playlist);
 
@@ -151,22 +142,16 @@
 
                     Console.WriteLine($"Playlist {playlist.Name} successfully deleted.");
                 }
-                else
-                {
-                    Console.WriteLine($"Playlist with id {id} doesn't exist, or you're not the owner.");
-                }
             }
         }
 
         public void Share(List<string> arguments, int userId)
         {
-            if (this.IsInteger(arguments[0], out int id, "Id"))
+            if (Validator.IsInteger(arguments[0], out int id, "Id"))
             {
                 var playlists = this.Context.GetPlaylists();
-                var playlist = playlists
-                    .FirstOrDefault(p => p.Id == id && p.UserId == userId);
 
-                if (playlist != null)
+                if (Validator.PlaylistExists(id, userId, playlists, out Playlist playlist))
                 {
                     playlist.IsPublic = true;
 
@@ -174,30 +159,22 @@
 
                     Console.WriteLine($"Playlist {playlist.Name} successfully shared.");
                 }
-                else
-                {
-                    Console.WriteLine($"Playlist with id {id} doesn't exist, or you're not the owner.");
-                }
             }
         }
 
         public void AddSong(List<string> arguments, int userId)
         {
-            if (this.IsInteger(arguments[0], out int songId, "SongId"))
+            if (Validator.IsInteger(arguments[0], out int songId, "SongId"))
             {
                 var songs = this.Context.GetSongs();
-                var song = songs
-                    .FirstOrDefault(s => s.Id == songId);
 
-                if (song != null)
+                if (Validator.SongExists(songId, songs, out Song song))
                 {
-                    if (this.IsInteger(arguments[1], out int playlistId, "PlaylistId"))
+                    if (Validator.IsInteger(arguments[1], out int playlistId, "PlaylistId"))
                     {
                         var playlists = this.Context.GetPlaylists();
-                        var playlist = playlists
-                            .FirstOrDefault(p => p.Id == playlistId && p.UserId == userId);
 
-                        if (playlist != null)
+                        if (Validator.PlaylistExists(playlistId, userId, playlists, out Playlist playlist))
                         {
                             playlist.SongIds.Add(songId);
 
@@ -205,52 +182,32 @@
 
                             Console.WriteLine($"Song {song.Title} successfully added to playlist {playlist.Name}.");
                         }
-                        else
-                        {
-                            Console.WriteLine($"Playlist with id {playlistId} doesn't exist, or you're not the owner.");
-                        }
                     }
-                }
-                else
-                {
-                    Console.WriteLine($"Song with id {songId} doesn't exist.");
                 }
             }
         }
 
         public void RemoveSong(List<string> arguments, int userId)
         {
-            if (this.IsInteger(arguments[0], out int songId, "SongId"))
+            if (Validator.IsInteger(arguments[0], out int songId, "SongId"))
             {
-                var songs = this.Context.GetSongs();
-                var song = songs
-                    .FirstOrDefault(s => s.Id == songId);
-
-                if (song != null)
+                if (Validator.IsInteger(arguments[1], out int playlistId, "PlaylistId"))
                 {
-                    if (this.IsInteger(arguments[1], out int playlistId, "PlaylistId"))
-                    {
-                        var playlists = this.Context.GetPlaylists();
-                        var playlist = playlists
-                            .FirstOrDefault(p => p.Id == playlistId && p.UserId == userId);
+                    var playlists = this.Context.GetPlaylists();
 
-                        if (playlist != null)
-                        {
+                    if (Validator.PlaylistExists(playlistId, userId, playlists, out Playlist playlist))
+                    {
+                        var songs = this.Context.GetSongsForPlaylist(playlistId);
+
+                        if (Validator.SongExists(songId, songs, out Song song))
+                        {   
                             playlist.SongIds.Remove(songId);
 
                             this.SaveChanges(null, playlists);
 
                             Console.WriteLine($"Song {song.Title} successfully removed from playlist {playlist.Name}.");
                         }
-                        else
-                        {
-                            Console.WriteLine($"Playlist with id {playlistId} doesn't exist, or you're not the owner.");
-                        }
                     }
-                }
-                else
-                {
-                    Console.WriteLine($"Song with id {songId} doesn't exist.");
                 }
             }
         }

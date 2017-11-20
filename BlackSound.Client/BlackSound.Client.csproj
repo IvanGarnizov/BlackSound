@@ -44,11 +44,13 @@
   <ItemGroup>
     <Compile Include="BlackSoundMain.cs" />
     <Compile Include="Core\Controllers\BlackSoundController.cs" />
+    <Compile Include="Utility\Messages.cs" />
     <Compile Include="Core\Controllers\PlaylistsController.cs" />
     <Compile Include="Core\Controllers\SongsController.cs" />
     <Compile Include="Core\Controllers\UsersController.cs" />
     <Compile Include="Core\Engine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\Validator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

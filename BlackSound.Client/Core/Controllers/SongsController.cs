@@ -1,40 +1,42 @@
 ﻿namespace BlackSound.Client.Core.Controllers
 {
+    using Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
-    using Models;
+    using Utility;
 
     class SongsController : BlackSoundController
     {
         public void Create(List<string> arguments)
         {
-            var songs = this.Context.GetSongs();
-            int lastId = 0;
-
-            if (songs.Count > 0)
+            if (Validator.IsInteger(arguments[1], out int year, "Year"))
             {
-                lastId = songs.Last().Id;
+                var songs = this.Context.GetSongs();
+                int lastId = 0;
+
+                if (songs.Count > 0)
+                {
+                    lastId = songs.Last().Id;
+                }
+
+                string title = arguments[0];
+                List<string> artistsNames = arguments[2].Split(' ').ToList();
+
+                var song = new Song()
+                {
+                    Id = ++lastId,
+                    Title = title,
+                    Year = year,
+                    ArtistsNames = artistsNames
+                };
+
+                songs.Add(song);
+
+                this.SaveChanges(songs);
+
+                Console.WriteLine($"Song {title} successfully created.");
             }
-
-            string title = arguments[0];
-            int year = int.Parse(arguments[1]);
-            List<string> artistsNames = arguments[2].Split(' ').ToList();
-
-            var song = new Song()
-            {
-                Id = ++lastId,
-                Title = title,
-                Year = year,
-                ArtistsNames = artistsNames
-            };
-
-            songs.Add(song);
-
-            this.SaveChanges(songs);
-
-            Console.WriteLine($"Song {title} successfully created.");
         }
 
         public void Read()
@@ -56,11 +58,11 @@
 
         public void Update(List<string> arguments)
         {
-            if (this.IsInteger(arguments[0], out int id, "Id"))
+            if (Validator.IsInteger(arguments[0], out int id, "Id"))
             {
                 var songs = this.Context.GetSongs();
                 
-                if (this.Exists(id, songs, out Song song))
+                if (Validator.SongExists(id, songs, out Song song))
                 {
                     arguments.RemoveAt(0);
 
@@ -84,7 +86,10 @@
 
                                     break;
                                 case "Year":
-                                    year = int.Parse(value);
+                                    if (!Validator.IsInteger(value, out year, "Year"))
+                                    {
+                                        hasIncorrectField = true;
+                                    }
 
                                     break;
                                 case "Artists":
@@ -136,11 +141,11 @@
 
         public void Delete(List<string> arguments)
         {
-            if (this.IsInteger(arguments[0], out int id, "Id"))
+            if (Validator.IsInteger(arguments[0], out int id, "Id"))
             {
                 var songs = this.Context.GetSongs();
 
-                if (this.Exists(id, songs, out Song song))
+                if (Validator.SongExists(id, songs, out Song song))
                 {
                     songs.Remove(song);
 
@@ -149,21 +154,6 @@
                     Console.WriteLine($"Song {song.Title} successfully deleted.");
                 }
             }
-        }
-
-        private bool Exists(int id, List<Song> songs, out Song song)
-        {
-            song = songs
-                .FirstOrDefault(s => s.Id == id);
-
-            if (song == null)
-            {
-                Console.WriteLine($"Song with id {id} doesn't exist.");
-
-                return false;
-            }
-
-            return true;
         }
     }
 }

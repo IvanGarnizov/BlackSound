@@ -5,6 +5,8 @@
 
     using Core.Controllers;
 
+    using Utility;
+
     public class Engine
     {
         private string input;
@@ -33,272 +35,273 @@
                 switch (command)
                 {
                     case "CreateSong":
-                        if (arguments.Count == 3)
+                        if (this.IsAdmin())
                         {
-                            if (this.IsAdmin())
+                            if (arguments.Count == 3)
                             {
                                 this.songsController.Create(arguments);
                             }
                             else
                             {
-                                Console.WriteLine("You need to login and be an admin, to be able to publish songs.");
+                                Console.WriteLine(Messages.AddSongWrongNumberOfArguments);
                             }
                         }
                         else
                         {
-                            Console.WriteLine("Exactly 3 arguments are expected - title, year and artists.");
+                            Console.WriteLine(Messages.AddSongNoAdmin);
                         }
 
                         break;
                     case "ReadSongs":
-                        if (arguments.Count == 0)
+                        if (this.IsAdmin())
                         {
-                            if (this.IsAdmin())
+                            if (arguments.Count == 0)
                             {
                                 this.songsController.Read();
                             }
                             else
                             {
-                                Console.WriteLine("You need to login and be an admin, to be able to read songs.");
+                                Console.WriteLine(Messages.NoArgumentsExpected);
                             }
                         }
                         else
                         {
-                            Console.WriteLine("No arguments are expected.");
+                            Console.WriteLine(Messages.ReadSongsNoAdmin);
                         }
 
                         break;
                     case "UpdateSong":
-                        if (1 < arguments.Count && arguments.Count <= 4)
+                        if (this.IsAdmin())
                         {
-                            if (this.IsAdmin())
+                            if (1 < arguments.Count && arguments.Count <= 4)
                             {
                                 this.songsController.Update(arguments);
                             }
                             else
                             {
-                                Console.WriteLine("You need to login and be an admin, to be able to update songs.");
+                                Console.WriteLine(Messages.UpdateSongWrongNumberOfArguments);
                             }
                         }
                         else
                         {
-                            Console.WriteLine("Between 2 and 4 arguments are expected - the id is mandatory, the next arguments are the fields you wish to update - title, year or artists.");
+                            Console.WriteLine(Messages.UpdateSongNoAdmin);
                         }
 
                         break;
                     case "DeleteSong":
-                        if (arguments.Count == 1)
+                        if (this.IsAdmin())
                         {
-                            if (this.IsAdmin())
+                            if (arguments.Count == 1)
                             {
                                 this.songsController.Delete(arguments);
                             }
                             else
                             {
-                                Console.WriteLine("You need to login and be an admin, to be able to delete songs.");
+                                Console.WriteLine(Messages.DeleteSongWrongNumberOfArguments);
                             }
                         }
                         else
                         {
-                            Console.WriteLine("Exactly 1 argument is expected - the id of song.");
+                            Console.WriteLine(Messages.DeleteSongNoAdmin);
                         }
 
                         break;
                     case "CreatePlaylist":
-                        if (arguments.Count == 2)
+                        if (this.IsLoggedIn())
                         {
-                            if (this.IsLoggedIn())
+                            if (arguments.Count == 2)
                             {
                                 this.playlistsController.Create(arguments, this.usersController.CurrentUser.Id);
                             }
                             else
                             {
-                                Console.WriteLine("You need to login to be able to create playlists.");
+                                Console.WriteLine(Messages.AddPlaylistWrongNumberOfArguments);
                             }
                         }
                         else
                         {
-                            Console.WriteLine("Exactly 2 arguments are expected - name and description.");
+                            Console.WriteLine(Messages.AddPlaylistNoLogin);
                         }
 
                         break;
-                    case "ReadPlaylists":
-                        if (arguments.Count == 0)
+                    case "ReadPlaylist":
+                        if (this.IsLoggedIn())
                         {
-                            if (this.IsLoggedIn())
+                            if (arguments.Count == 1)
                             {
-                                this.playlistsController.Read();
+                                this.playlistsController.Read(arguments);
                             }
                             else
                             {
-                                Console.WriteLine("You need to login to be able to read playlists.");
+                                Console.WriteLine(Messages.ReadPlaylistWrongNumberOfArguments);
                             }
                         }
                         else
                         {
-                            Console.WriteLine("No arguments are expected.");
+                            Console.WriteLine(Messages.ReadPlaylistsNoLogin);
                         }
 
                         break;
                     case "UpdatePlaylist":
-                        if (1 < arguments.Count && arguments.Count <= 3)
+                        if (this.IsLoggedIn())
                         {
-                            if (this.IsLoggedIn())
+                            if (1 < arguments.Count && arguments.Count <= 3)
                             {
                                 this.playlistsController.Update(arguments, this.usersController.CurrentUser.Id);
                             }
                             else
                             {
-                                Console.WriteLine("You need to login to be able to update your playlists.");
+                                Console.WriteLine(Messages.UpdatePlaylistWrongNumberOfArguments);
                             }
                         }
                         else
                         {
-                            Console.WriteLine("Between 2 and 3 arguments are expected - the id is mandatory, the next arguments are the fields you wish to update - name or description.");
+                            Console.WriteLine(Messages.UpdatePlaylistNoLogin);
                         }
 
                         break;
                     case "DeletePlaylist":
-                        if (arguments.Count == 1)
+                        if (this.IsLoggedIn())
                         {
-                            if (this.IsLoggedIn())
+                            if (arguments.Count == 1)
                             {
                                 this.playlistsController.Delete(arguments, this.usersController.CurrentUser.Id);
                             }
                             else
                             {
-                                Console.WriteLine("You need to login to be able to delete your playlists.");
+                                Console.WriteLine(Messages.DeletePlaylistWrongNumberOfArguments);
                             }
                         }
                         else
                         {
-                            Console.WriteLine("Exactly 1 argument is expected - the id of playlist.");
+                            Console.WriteLine(Messages.DeletePlaylistNoLogin);
                         }
 
                         break;
                     case "SharePlaylist":
-                        if (arguments.Count == 1)
+                        if (this.IsLoggedIn())
                         {
-                            if (this.IsLoggedIn())
+                            if (arguments.Count == 1)
                             {
                                 this.playlistsController.Share(arguments, this.usersController.CurrentUser.Id);
                             }
                             else
                             {
-                                Console.WriteLine("You need to login to be able to share your playlists.");
+                                Console.WriteLine(Messages.SharePlaylistWrongNumberOfArguments);
                             }
                         }
                         else
                         {
-                            Console.WriteLine("Exactly 1 argument is expected - the id of playlist.");
+                            Console.WriteLine(Messages.SharePlaylistNoLogin);
                         }
+
 
                         break;
                     case "AddSongToPlaylist":
-                        if (arguments.Count == 2)
+                        if (this.IsLoggedIn())
                         {
-                            if (this.IsLoggedIn())
+                            if (arguments.Count == 2)
                             {
                                 this.playlistsController.AddSong(arguments, this.usersController.CurrentUser.Id);
                             }
                             else
                             {
-                                Console.WriteLine("You need to login to be able to add songs to your playlists.");
+                                Console.WriteLine(Messages.AddSongToPlaylistWrongNumberOfArguments);
                             }
                         }
                         else
                         {
-                            Console.WriteLine("Exactly 2 arguments are expected - songId and playlistId.");
+                            Console.WriteLine(Messages.AddSongToPlaylistNoLogin);
                         }
 
                         break;
                     case "RemoveSongFromPlaylist":
-                        if (arguments.Count == 2)
+                        if (this.IsLoggedIn())
                         {
-                            if (this.IsLoggedIn())
+                            if (arguments.Count == 2)
                             {
                                 this.playlistsController.RemoveSong(arguments, this.usersController.CurrentUser.Id);
                             }
                             else
                             {
-                                Console.WriteLine("You need to login to be able to remove songs from your playlists.");
+                                Console.WriteLine(Messages.RemoveSongFromPlaylistWrongNumberOfArguments);
                             }
                         }
                         else
                         {
-                            Console.WriteLine("Exactly 2 arguments are expected - songId and playlistId.");
+                            Console.WriteLine(Messages.RemoveSongFromPlaylistNoLogin);
                         }
 
                         break;
                     case "Register":
-                        if (2 < arguments.Count && arguments.Count <= 4)
+                        if (!this.IsLoggedIn())
                         {
-                            if (this.IsLoggedIn())
+                            if (2 < arguments.Count && arguments.Count <= 4)
                             {
-                                Console.WriteLine("There is already someone logged in.");
+                                this.usersController.Register(arguments);
                             }
                             else
                             {
-                                this.usersController.Register(arguments);
+                                Console.WriteLine(Messages.RegisterWrongNumberOfArguments);
                             }
                         }
                         else
                         {
-                            Console.WriteLine("Between 2 and 4 arguments are expected - email, password and display name are mandatory, 4th argument is wether or not you wish to be admin.");
+                            Console.WriteLine(Messages.SomeoneAlreadyLoggedIn);
                         }
 
                         break;
                     case "Login":
-                        if (arguments.Count == 2)
+                        if (!this.IsLoggedIn())
                         {
-                            if (this.IsLoggedIn())
+                            if (arguments.Count == 2)
                             {
-                                Console.WriteLine("There is already someone logged in.");
+                                this.usersController.Login(arguments);
                             }
                             else
                             {
-                                this.usersController.Login(arguments);
+                                Console.WriteLine(Messages.LoginWrongNumberOfArguments);
                             }
                         }
                         else
                         {
-                            Console.WriteLine("Exactly 2 arguments are expected - email and password.");
+                            Console.WriteLine(Messages.SomeoneAlreadyLoggedIn);
                         }
 
                         break;
                     case "Logout":
-                        if (arguments.Count == 0)
+                        if (this.IsLoggedIn())
                         {
-                            if (this.IsLoggedIn())
+                            if (arguments.Count == 0)
                             {
                                 this.usersController.Logout();
                             }
                             else
                             {
-                                Console.WriteLine("There is noone logged in.");
+                                Console.WriteLine(Messages.NoArgumentsExpected);
                             }
                         }
                         else
                         {
-                            Console.WriteLine("No arguments are expected.");
+                            Console.WriteLine(Messages.NooneLoggedIn);
                         }
 
                         break;
                     case "CurrentUser":
-                        if (arguments.Count == 0)
+                        if (this.IsLoggedIn())
                         {
-                            if (this.IsLoggedIn())
+                            if (arguments.Count == 0)
                             {
                                 Console.WriteLine(this.usersController.CurrentUser.Email);
                             }
                             else
                             {
-                                Console.WriteLine("There is noone logged in.");
+                                Console.WriteLine(Messages.NoArgumentsExpected);
                             }
                         }
                         else
                         {
-                            Console.WriteLine("No arguments are expected.");
+                            Console.WriteLine(Messages.NooneLoggedIn);
                         }
 
                         break;
