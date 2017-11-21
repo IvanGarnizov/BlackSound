@@ -15,13 +15,7 @@
         public void Register(List<string> arguments)
         {
             var users = this.Context.GetUsers();
-            int lastId = 0;
-
-            if (users.Count > 0)
-            {
-                lastId = users.Last().Id;
-            }
-
+            int id = users.Count + 1;
             string email = arguments[0];
             var user = users
                 .FirstOrDefault(u => u.Email == email);
@@ -34,40 +28,19 @@
             {
                 string password = arguments[1];
                 string displayName = arguments[2];
-                bool isAdmin = false;
 
-                if (arguments.Count > 3)
+                users.Add(new User()
                 {
-                    isAdmin = true;
-
-                    var playlists = this.Context.GetPlaylists();
-
-                    playlists.Add(new Playlist()
-                    {
-                        Id = 1,
-                        Name = "All Songs",
-                        Description = "All songs on Black Sound",
-                        IsPublic = true,
-                        UserId = lastId + 1
-                    });
-
-                    this.SaveChanges(null, playlists);
-                }
-
-                user = new User()
-                {
-                    Id = ++lastId,
+                    Id = id,
                     Email = email,
                     Password = password,
                     DisplayName = displayName,
-                    IsAdministrator = isAdmin
-                };
-
-                users.Add(user);
-
+                    IsAdministrator = false
+                });
+                
                 this.SaveChanges(null, null, users);
 
-                Console.WriteLine(Messages.UserRegistered(user.Email));
+                Console.WriteLine(Messages.UserRegistered(email));
 
                 this.Login(new List<string>(new string[] { email, password }));
             }

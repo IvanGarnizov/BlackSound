@@ -84,5 +84,37 @@
 
             return songs;
         }
+
+        public void Seed()
+        {
+            var users = this.GetUsers();
+
+            if (users.Count == 0)
+            {
+                users.Add(new User()
+                {
+                    Id = 1,
+                    Email = "admin@black.sound.com",
+                    Password = "admin",
+                    DisplayName = "pesho",
+                    IsAdministrator = true
+                });
+
+                this.SaveChanges(null, null, users);
+
+                var playlists = this.GetPlaylists();
+
+                playlists.Add(new Playlist()
+                {
+                    Id = 1,
+                    Name = "All Songs",
+                    Description = "All songs on black sound",
+                    IsPublic = true,
+                    UserId = 1
+                });
+
+                this.SaveChanges(null, playlists);
+            }
+        }
     }
 }

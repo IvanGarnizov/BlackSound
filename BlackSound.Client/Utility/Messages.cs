@@ -13,7 +13,7 @@
         public const string SharePlaylistWrongNumberOfArguments = "Exactly 1 argument is expected - the id of playlist.";
         public const string AddSongToPlaylistWrongNumberOfArguments = "Exactly 2 arguments are expected - songId and playlistId.";
         public const string RemoveSongFromPlaylistWrongNumberOfArguments = "Exactly 2 arguments are expected - songId and playlistId.";
-        public const string RegisterWrongNumberOfArguments = "Between 3 and 4 arguments are expected - email, password and display name are mandatory, 4th argument is wether or not you wish to be admin.";
+        public const string RegisterWrongNumberOfArguments = "Exactly 3 arguments are expected - email, password and display name.";
         public const string LoginWrongNumberOfArguments = "Exactly 2 arguments are expected - email and password.";
         public const string AddSongNoAdmin = "You need to login and be an admin to be able to create songs.";
         public const string ReadSongsNoAdmin = "You need to login and be an admin to be able to read songs.";
@@ -28,7 +28,6 @@
         public const string RemoveSongFromPlaylistNoLogin = "You need to login to be able to remove songs from your playlists.";
         public const string SomeoneAlreadyLoggedIn = "There is already someone logged in.";
         public const string NooneLoggedIn = "There is noone logged in.";
-        public const string AlreadyHasAdmin = "There is already an admin.";
         public const string NoSongsRegistered = "There are no songs registered.";
         public const string ArgumentIncorrectFormatForSong = "An argument is not in correct format. The correct format is {field}=value, where {field} stands for [Title, Year or Artists].";
         public const string EmailExists = "A user with this email already exists.";

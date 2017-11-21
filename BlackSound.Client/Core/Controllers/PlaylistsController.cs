@@ -16,25 +16,18 @@
             var users = this.Context.GetUsers();
             var user = users
                 .First(u => u.Id == userId);
-            int lastId = 0;
-
-            if (playlists.Count > 0)
-            {
-                lastId = playlists.Last().Id;
-            }
-
+            int id = playlists.Count + 1;
             string name = arguments[0];
             string description = arguments[1];
-            var playlist = new Playlist()
+
+            playlists.Add(new Playlist()
             {
-                Id = ++lastId,
+                Id = id,
                 Name = name,
                 Description = description,
                 UserId = userId
-            };
-
-            playlists.Add(playlist);
-
+            });
+            
             this.SaveChanges(null, playlists);
 
             Console.WriteLine(Messages.PlaylistCreated(name));

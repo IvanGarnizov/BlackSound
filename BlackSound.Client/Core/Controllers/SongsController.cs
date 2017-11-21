@@ -15,35 +15,27 @@
             if (Validator.IsInteger(arguments[1], out int year, "Year"))
             {
                 var songs = this.Context.GetSongs();
-                int lastId = 0;
-
-                if (songs.Count > 0)
-                {
-                    lastId = songs.Last().Id;
-                }
-
+                int id = songs.Count + 1;
                 string title = arguments[0];
                 List<string> artistsNames = arguments[2].Split(' ').ToList();
 
-                var song = new Song()
+                songs.Add(new Song()
                 {
-                    Id = ++lastId,
+                    Id = id,
                     Title = title,
                     Year = year,
                     ArtistsNames = artistsNames
-                };
-
-                songs.Add(song);
+                });
 
                 var playlists = this.Context.GetPlaylists();
                 var allSongsPlaylist = playlists
                     .First(p => p.Name == "All Songs");
 
-                allSongsPlaylist.SongIds.Add(song.Id);
+                allSongsPlaylist.SongIds.Add(id);
 
                 this.SaveChanges(songs, playlists);
 
-                Console.WriteLine(Messages.SongCreated(song.Title));
+                Console.WriteLine(Messages.SongCreated(title));
             }
         }
 
