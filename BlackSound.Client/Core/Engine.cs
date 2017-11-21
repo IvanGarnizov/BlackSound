@@ -238,7 +238,14 @@
                         {
                             if (2 < arguments.Count && arguments.Count <= 4)
                             {
-                                this.usersController.Register(arguments);
+                                if (this.usersController.HasAdmin() && arguments.Count == 4)
+                                {
+                                    Console.WriteLine(Messages.AlreadyHasAdmin);
+                                }
+                                else
+                                {
+                                    this.usersController.Register(arguments);
+                                }
                             }
                             else
                             {
@@ -306,7 +313,7 @@
 
                         break;
                     default:
-                        Console.WriteLine($"Command {command} is not supported.");
+                        Console.WriteLine(Messages.CommandNotSupported(command));
 
                         break;
                 }

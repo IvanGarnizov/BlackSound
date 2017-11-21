@@ -37,7 +37,7 @@
 
             this.SaveChanges(null, playlists);
 
-            Console.WriteLine($"Playlist {name} successfully created.");
+            Console.WriteLine(Messages.PlaylistCreated(name));
         }
 
         public void Read(List<string> arguments)
@@ -54,7 +54,7 @@
             }
             else
             {
-                Console.WriteLine("There are no playlist with this name registered or it's not public.");
+                Console.WriteLine(Messages.PlaylistNotExistingOrNotPublic);
             }
         }
 
@@ -91,7 +91,7 @@
 
                                     break;
                                 default:
-                                    Console.WriteLine($"Field {field} is not present in a playlist.");
+                                    Console.WriteLine(Messages.FieldNotPresentInPlaylist(field));
 
                                     hasIncorrectField = true;
 
@@ -100,7 +100,7 @@
                         }
                         else
                         {
-                            Console.WriteLine("An argument is not in correct format. The correct format is {field}=value, where {field} stands for [Name or Description]");
+                            Console.WriteLine(Messages.ArgumentIncorrectFormatForPlaylist);
 
                             hasIncorrectField = true;
 
@@ -122,7 +122,7 @@
 
                         this.SaveChanges(null, playlists);
 
-                        Console.WriteLine($"Playlist {playlist.Name} successfully updated.");
+                        Console.WriteLine(Messages.PlaylistUpdated(playlist.Name));
                     }
                 }
             }
@@ -140,7 +140,7 @@
 
                     this.SaveChanges(null, playlists);
 
-                    Console.WriteLine($"Playlist {playlist.Name} successfully deleted.");
+                    Console.WriteLine(Messages.PlaylistDeleted(playlist.Name));
                 }
             }
         }
@@ -157,7 +157,7 @@
 
                     this.SaveChanges(null, playlists);
 
-                    Console.WriteLine($"Playlist {playlist.Name} successfully shared.");
+                    Console.WriteLine(Messages.PlaylistShared(playlist.Name));
                 }
             }
         }
@@ -180,7 +180,7 @@
 
                             this.SaveChanges(null, playlists);
 
-                            Console.WriteLine($"Song {song.Title} successfully added to playlist {playlist.Name}.");
+                            Console.WriteLine(Messages.AddedSongToPlaylist(song.Title, playlist.Name));
                         }
                     }
                 }
@@ -205,7 +205,7 @@
 
                             this.SaveChanges(null, playlists);
 
-                            Console.WriteLine($"Song {song.Title} successfully removed from playlist {playlist.Name}.");
+                            Console.WriteLine(Messages.RemovedSongFromPlaylist(song.Title, playlist.Name));
                         }
                     }
                 }

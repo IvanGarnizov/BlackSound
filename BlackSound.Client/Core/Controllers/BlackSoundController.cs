@@ -1,6 +1,5 @@
 ﻿namespace BlackSound.Client.Core.Controllers
 {
-    using System;
     using System.Collections.Generic;
 
     using Data;

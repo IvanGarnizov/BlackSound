@@ -15,7 +15,7 @@
 
             if (song == null)
             {
-                Console.WriteLine($"Song with id {id} doesn't exist.");
+                Console.WriteLine(Messages.SongNoExist(id));
 
                 return false;
             }
@@ -30,7 +30,7 @@
 
             if (playlist == null)
             {
-                Console.WriteLine($"Playlist with id {id} doesn't exist or you're not the owner.");
+                Console.WriteLine(Messages.PlaylistNoExistOrNoOwner(id));
 
                 return false;
             }
@@ -45,7 +45,7 @@
                 return true;
             }
 
-            Console.WriteLine($"{name} is not an integer.");
+            Console.WriteLine(Messages.NoInteger(name));
 
             return false;
         }

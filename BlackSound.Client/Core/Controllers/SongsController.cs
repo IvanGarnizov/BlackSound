@@ -1,9 +1,11 @@
 ﻿namespace BlackSound.Client.Core.Controllers
 {
-    using Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+
+    using Models;
+
     using Utility;
 
     class SongsController : BlackSoundController
@@ -33,9 +35,15 @@
 
                 songs.Add(song);
 
-                this.SaveChanges(songs);
+                var playlists = this.Context.GetPlaylists();
+                var allSongsPlaylist = playlists
+                    .First(p => p.Name == "All Songs");
 
-                Console.WriteLine($"Song {title} successfully created.");
+                allSongsPlaylist.SongIds.Add(song.Id);
+
+                this.SaveChanges(songs, playlists);
+
+                Console.WriteLine(Messages.SongCreated(song.Title));
             }
         }
 
@@ -52,7 +60,7 @@
             }
             else
             {
-                Console.WriteLine("There are no songs registered.");
+                Console.WriteLine(Messages.NoSongsRegistered);
             }
         }
 
@@ -97,7 +105,7 @@
 
                                     break;
                                 default:
-                                    Console.WriteLine($"Field {field} is not present in a song.");
+                                    Console.WriteLine(Messages.FieldNotPresentSong(field));
 
                                     hasIncorrectField = true;
 
@@ -106,7 +114,7 @@
                         }
                         else
                         {
-                            Console.WriteLine("An argument is not in correct format. The correct format is {field}=value, where {field} stands for [Title, Year or Artists]");
+                            Console.WriteLine(Messages.ArgumentIncorrectFormatForSong);
 
                             hasIncorrectField = true;
 
@@ -133,7 +141,7 @@
 
                         this.SaveChanges(songs);
 
-                        Console.WriteLine($"Song {song.Title} successfully updated.");
+                        Console.WriteLine(Messages.SongUpdated(song.Title));
                     }
                 }
             }
@@ -147,11 +155,21 @@
 
                 if (Validator.SongExists(id, songs, out Song song))
                 {
+                    var playlists = this.Context.GetPlaylists();
+
+                    foreach (var playlist in playlists)
+                    {
+                        if (playlist.SongIds.Contains(id))
+                        {
+                            playlist.SongIds.Remove(id);
+                        }
+                    }
+
                     songs.Remove(song);
 
-                    this.SaveChanges(songs);
+                    this.SaveChanges(songs, playlists);
 
-                    Console.WriteLine($"Song {song.Title} successfully deleted.");
+                    Console.WriteLine(Messages.SongDeleted(song.Title));
                 }
             }
         }

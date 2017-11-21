@@ -6,6 +6,8 @@
 
     using Models;
 
+    using Utility;
+
     class UsersController : BlackSoundController
     {
         public User CurrentUser { get; set; }
@@ -26,7 +28,7 @@
 
             if (user != null)
             {
-                Console.WriteLine("A user with this email already exists.");
+                Console.WriteLine(Messages.EmailExists);
             }
             else
             {
@@ -37,6 +39,19 @@
                 if (arguments.Count > 3)
                 {
                     isAdmin = true;
+
+                    var playlists = this.Context.GetPlaylists();
+
+                    playlists.Add(new Playlist()
+                    {
+                        Id = 1,
+                        Name = "All Songs",
+                        Description = "All songs on Black Sound",
+                        IsPublic = true,
+                        UserId = lastId + 1
+                    });
+
+                    this.SaveChanges(null, playlists);
                 }
 
                 user = new User()
@@ -52,7 +67,7 @@
 
                 this.SaveChanges(null, null, users);
 
-                Console.WriteLine($"User {email} successfully registered.");
+                Console.WriteLine(Messages.UserRegistered(user.Email));
 
                 this.Login(new List<string>(new string[] { email, password }));
             }
@@ -70,11 +85,11 @@
             {
                 this.CurrentUser = user;
 
-                Console.WriteLine($"User {email} successfully logged in.");
+                Console.WriteLine(Messages.UserLoggedIn(user.Email));
             }
             else
             {
-                Console.WriteLine("Email or password are incorrect.");
+                Console.WriteLine(Messages.IncorrectEmailOrPassword);
             }
         }
 
@@ -84,7 +99,13 @@
 
             this.CurrentUser = null;
 
-            Console.WriteLine($"User {currentUserEmail} successfully logged out.");
+            Console.WriteLine(Messages.UserLogout(currentUserEmail));
+        }
+
+        public bool HasAdmin()
+        {
+            return this.Context.GetUsers()
+                .Any(u => u.IsAdministrator);
         }
     }
 }
