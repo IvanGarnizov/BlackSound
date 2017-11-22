@@ -13,31 +13,35 @@
         public void Create(List<string> arguments, int userId)
         {
             var playlists = this.Context.GetPlaylists();
-            var users = this.Context.GetUsers();
-            var user = users
-                .First(u => u.Id == userId);
-            int id = playlists.Count + 1;
             string name = arguments[0];
-            string description = arguments[1];
 
-            playlists.Add(new Playlist()
+            if (!Validator.PlaylistExistsName(name, playlists))
             {
-                Id = id,
-                Name = name,
-                Description = description,
-                UserId = userId
-            });
-            
-            this.SaveChanges(null, playlists);
+                var users = this.Context.GetUsers();
+                var user = users
+                    .First(u => u.Id == userId);
+                int id = playlists.Count + 1;
+                string description = arguments[1];
 
-            Console.WriteLine(Messages.PlaylistCreated(name));
+                playlists.Add(new Playlist()
+                {
+                    Id = id,
+                    Name = name,
+                    Description = description,
+                    UserId = userId
+                });
+
+                this.SaveChanges(null, playlists);
+
+                Console.WriteLine(Messages.PlaylistCreated(name));
+            }
         }
 
         public void Read(List<string> arguments)
         {
             string name = arguments[0];
             var playlist = this.Context.GetPlaylists()
-                .First(p => p.IsPublic && p.Name == name);
+                .FirstOrDefault(p => p.IsPublic && p.Name == name);
 
             if (playlist != null)
             {
@@ -57,7 +61,7 @@
             {
                 var playlists = this.Context.GetPlaylists();
 
-                if (Validator.PlaylistExists(id, userId, playlists, out Playlist playlist))
+                if (Validator.PlaylistExistsId(id, userId, playlists, out Playlist playlist))
                 {
                     arguments.RemoveAt(0);
 
@@ -127,7 +131,7 @@
             {
                 var playlists = this.Context.GetPlaylists();
 
-                if (Validator.PlaylistExists(id, userId, playlists, out Playlist playlist))
+                if (Validator.PlaylistExistsId(id, userId, playlists, out Playlist playlist))
                 {
                     playlists.Remove(playlist);
 
@@ -144,7 +148,7 @@
             {
                 var playlists = this.Context.GetPlaylists();
 
-                if (Validator.PlaylistExists(id, userId, playlists, out Playlist playlist))
+                if (Validator.PlaylistExistsId(id, userId, playlists, out Playlist playlist))
                 {
                     playlist.IsPublic = true;
 
@@ -167,7 +171,7 @@
                     {
                         var playlists = this.Context.GetPlaylists();
 
-                        if (Validator.PlaylistExists(playlistId, userId, playlists, out Playlist playlist))
+                        if (Validator.PlaylistExistsId(playlistId, userId, playlists, out Playlist playlist))
                         {
                             playlist.SongIds.Add(songId);
 
@@ -188,7 +192,7 @@
                 {
                     var playlists = this.Context.GetPlaylists();
 
-                    if (Validator.PlaylistExists(playlistId, userId, playlists, out Playlist playlist))
+                    if (Validator.PlaylistExistsId(playlistId, userId, playlists, out Playlist playlist))
                     {
                         var songs = this.Context.GetSongsForPlaylist(playlistId);
 

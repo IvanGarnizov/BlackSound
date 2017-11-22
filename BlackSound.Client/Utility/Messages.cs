@@ -30,10 +30,11 @@
         public const string NooneLoggedIn = "There is noone logged in.";
         public const string NoSongsRegistered = "There are no songs registered.";
         public const string ArgumentIncorrectFormatForSong = "An argument is not in correct format. The correct format is {field}=value, where {field} stands for [Title, Year or Artists].";
-        public const string EmailExists = "A user with this email already exists.";
+        public const string UserExists = "User with that email already exists.";
         public const string IncorrectEmailOrPassword = "Email or password are incorrect.";
         public const string PlaylistNotExistingOrNotPublic = "There are no playlist with this name registered or it's not public.";
         public const string ArgumentIncorrectFormatForPlaylist = "An argument is not in correct format. The correct format is {field}=value, where {field} stands for [Name or Description]";
+        public const string PlaylistExists = "Playlist with that name already exists.";
 
         public static string CommandNotSupported(string command)
         {

@@ -20,11 +20,7 @@
             var user = users
                 .FirstOrDefault(u => u.Email == email);
 
-            if (user != null)
-            {
-                Console.WriteLine(Messages.EmailExists);
-            }
-            else
+            if (!Validator.UserExists(email, users))
             {
                 string password = arguments[1];
                 string displayName = arguments[2];
