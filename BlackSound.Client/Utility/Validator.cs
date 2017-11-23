@@ -53,11 +53,8 @@
             return false;
         }
 
-        public static bool UserExists(string email, List<User> users)
+        public static bool UserExists(User user)
         {
-            var user = users
-                .FirstOrDefault(u => u.Email == email);
-
             if (user != null)
             {
                 Console.WriteLine(Messages.UserExists);

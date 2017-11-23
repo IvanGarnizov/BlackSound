@@ -3,15 +3,13 @@
     using System;
     using System.Collections.Generic;
 
-    public class Song
+    public class Song : BaseModel
     {
         public Song()
         {
             this.ArtistsNames = new List<string>();
         }
-
-        public int Id { get; set; }
-
+        
         public string Title { get; set; }
 
         public int Year { get; set; }

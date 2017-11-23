@@ -5,8 +5,6 @@
 
     using Core.Controllers;
 
-    using Data;
-
     using Utility;
 
     public class Engine
@@ -15,20 +13,19 @@
         private SongsController songsController;
         private PlaylistsController playlistsController;
         private UsersController usersController;
-        private BlackSoundContext context;
 
         public Engine()
         {
             this.songsController = new SongsController();
             this.playlistsController = new PlaylistsController();
             this.usersController = new UsersController();
-            this.context = new BlackSoundContext();
         }
 
         public void Run()
         {
-            this.context.Seed();
-            this.input = Console.ReadLine();
+            songsController.Seed();
+
+            input = Console.ReadLine();
 
             while (input != "stop")
             {

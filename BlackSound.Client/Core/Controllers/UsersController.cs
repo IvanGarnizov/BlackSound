@@ -8,33 +8,31 @@
 
     using Utility;
 
-    class UsersController : BlackSoundController
+    class UsersController : BaseController
     {
         public User CurrentUser { get; set; }
 
         public void Register(List<string> arguments)
         {
-            var users = this.Context.GetUsers();
-            int id = users.Count + 1;
+            int id = userRepository.GetId();
             string email = arguments[0];
-            var user = users
+            var user = userRepository.GetAll()
                 .FirstOrDefault(u => u.Email == email);
 
-            if (!Validator.UserExists(email, users))
+            if (!Validator.UserExists(user))
             {
                 string password = arguments[1];
                 string displayName = arguments[2];
 
-                users.Add(new User()
+                user = new User()
                 {
                     Id = id,
                     Email = email,
                     Password = password,
                     DisplayName = displayName,
                     IsAdministrator = false
-                });
-                
-                this.SaveChanges(null, null, users);
+                };
+                userRepository.Insert(user);
 
                 Console.WriteLine(Messages.UserRegistered(email));
 
@@ -44,10 +42,9 @@
 
         public void Login(List<string> arguments)
         {
-            var users = this.Context.GetUsers();
             string email = arguments[0];
             string password = arguments[1];
-            var user = users
+            var user = userRepository.GetAll()
                 .FirstOrDefault(u => u.Email == email && u.Password == password);
 
             if (user != null)
@@ -73,7 +70,7 @@
 
         public bool HasAdmin()
         {
-            return this.Context.GetUsers()
+            return userRepository.GetAll()
                 .Any(u => u.IsAdministrator);
         }
     }

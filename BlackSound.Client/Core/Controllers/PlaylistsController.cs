@@ -8,30 +8,27 @@
 
     using Utility;
 
-    class PlaylistsController : BlackSoundController
+    class PlaylistsController : BaseController
     {
         public void Create(List<string> arguments, int userId)
         {
-            var playlists = this.Context.GetPlaylists();
+            var playlists = playlistRepository.GetAll();
             string name = arguments[0];
 
             if (!Validator.PlaylistExistsName(name, playlists))
             {
-                var users = this.Context.GetUsers();
-                var user = users
-                    .First(u => u.Id == userId);
-                int id = playlists.Count + 1;
+                var user = userRepository.GetById(userId);
+                int id = playlistRepository.GetId();
                 string description = arguments[1];
-
-                playlists.Add(new Playlist()
+                var playlist = new Playlist()
                 {
                     Id = id,
                     Name = name,
                     Description = description,
                     UserId = userId
-                });
+                };
 
-                this.SaveChanges(null, playlists);
+                playlistRepository.Insert(playlist);
 
                 Console.WriteLine(Messages.PlaylistCreated(name));
             }
@@ -40,12 +37,11 @@
         public void Read(List<string> arguments)
         {
             string name = arguments[0];
-            var playlist = this.Context.GetPlaylists()
-                .FirstOrDefault(p => p.IsPublic && p.Name == name);
+            var playlist = playlistRepository.GetByNameAndStatus(name);
 
             if (playlist != null)
             {
-                var songs = this.Context.GetSongsForPlaylist(playlist.Id);
+                var songs = songRepository.GetForPlaylist(playlist);
 
                 Console.WriteLine(playlist.ToString() + "\nSongs: [" + String.Join(", ", songs.Select(s => $"{'"' + s.Title + '"'}")) + "]\n~~~~~~~~~~~~~~");
             }
@@ -59,7 +55,7 @@
         {
             if (Validator.IsInteger(arguments[0], out int id, "Id"))
             {
-                var playlists = this.Context.GetPlaylists();
+                var playlists = playlistRepository.GetAll();
 
                 if (Validator.PlaylistExistsId(id, userId, playlists, out Playlist playlist))
                 {
@@ -117,7 +113,7 @@
                             playlist.Description = description;
                         }
 
-                        this.SaveChanges(null, playlists);
+                        playlistRepository.Update(playlist);
 
                         Console.WriteLine(Messages.PlaylistUpdated(playlist.Name));
                     }
@@ -129,13 +125,11 @@
         {
             if (Validator.IsInteger(arguments[0], out int id, "Id"))
             {
-                var playlists = this.Context.GetPlaylists();
+                var playlists = playlistRepository.GetAll();
 
                 if (Validator.PlaylistExistsId(id, userId, playlists, out Playlist playlist))
                 {
-                    playlists.Remove(playlist);
-
-                    this.SaveChanges(null, playlists);
+                    playlistRepository.Delete(playlist);
 
                     Console.WriteLine(Messages.PlaylistDeleted(playlist.Name));
                 }
@@ -146,13 +140,13 @@
         {
             if (Validator.IsInteger(arguments[0], out int id, "Id"))
             {
-                var playlists = this.Context.GetPlaylists();
+                var playlists = playlistRepository.GetAll();
 
                 if (Validator.PlaylistExistsId(id, userId, playlists, out Playlist playlist))
                 {
                     playlist.IsPublic = true;
 
-                    this.SaveChanges(null, playlists);
+                    playlistRepository.Update(playlist);
 
                     Console.WriteLine(Messages.PlaylistShared(playlist.Name));
                 }
@@ -163,19 +157,18 @@
         {
             if (Validator.IsInteger(arguments[0], out int songId, "SongId"))
             {
-                var songs = this.Context.GetSongs();
+                var songs = songRepository.GetAll();
 
                 if (Validator.SongExists(songId, songs, out Song song))
                 {
                     if (Validator.IsInteger(arguments[1], out int playlistId, "PlaylistId"))
                     {
-                        var playlists = this.Context.GetPlaylists();
+                        var playlists = playlistRepository.GetAll();
 
                         if (Validator.PlaylistExistsId(playlistId, userId, playlists, out Playlist playlist))
                         {
                             playlist.SongIds.Add(songId);
-
-                            this.SaveChanges(null, playlists);
+                            playlistRepository.Update(playlist);
 
                             Console.WriteLine(Messages.AddedSongToPlaylist(song.Title, playlist.Name));
                         }
@@ -190,17 +183,16 @@
             {
                 if (Validator.IsInteger(arguments[1], out int playlistId, "PlaylistId"))
                 {
-                    var playlists = this.Context.GetPlaylists();
+                    var playlists = playlistRepository.GetAll();
 
                     if (Validator.PlaylistExistsId(playlistId, userId, playlists, out Playlist playlist))
                     {
-                        var songs = this.Context.GetSongsForPlaylist(playlistId);
+                        var songs = songRepository.GetForPlaylist(playlist);
 
                         if (Validator.SongExists(songId, songs, out Song song))
                         {   
                             playlist.SongIds.Remove(songId);
-
-                            this.SaveChanges(null, playlists);
+                            playlistRepository.Update(playlist);
 
                             Console.WriteLine(Messages.RemovedSongFromPlaylist(song.Title, playlist.Name));
                         }

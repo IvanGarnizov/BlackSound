@@ -2,15 +2,13 @@
 {
     using System.Collections.Generic;
 
-    public class Playlist
+    public class Playlist : BaseModel
     {
         public Playlist()
         {
             this.SongIds = new List<int>();
         }
-
-        public int Id { get; set; }
-
+        
         public string Name { get; set; }
 
         public string Description { get; set; }

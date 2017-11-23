@@ -8,32 +8,24 @@
 
     using Utility;
 
-    class SongsController : BlackSoundController
+    class SongsController : BaseController
     {
         public void Create(List<string> arguments)
         {
             if (Validator.IsInteger(arguments[1], out int year, "Year"))
             {
-                var songs = this.Context.GetSongs();
-                int id = songs.Count + 1;
+                int id = songRepository.GetId();
                 string title = arguments[0];
                 List<string> artistsNames = arguments[2].Split(' ').ToList();
-
-                songs.Add(new Song()
+                var song = new Song()
                 {
                     Id = id,
                     Title = title,
                     Year = year,
                     ArtistsNames = artistsNames
-                });
+                };
 
-                var playlists = this.Context.GetPlaylists();
-                var allSongsPlaylist = playlists
-                    .First(p => p.Name == "All Songs");
-
-                allSongsPlaylist.SongIds.Add(id);
-
-                this.SaveChanges(songs, playlists);
+                songRepository.Insert(song);
 
                 Console.WriteLine(Messages.SongCreated(title));
             }
@@ -41,7 +33,7 @@
 
         public void Read()
         {
-            var songs = this.Context.GetSongs();
+            var songs = songRepository.GetAll();
 
             if (songs.Count > 0)
             {
@@ -60,9 +52,9 @@
         {
             if (Validator.IsInteger(arguments[0], out int id, "Id"))
             {
-                var songs = this.Context.GetSongs();
+                var songs = songRepository.GetAll();
                 
-                if (Validator.SongExists(id, songs, out Song song))
+                if (Validator.SongExists(id, songs, out Song songToUpdate))
                 {
                     arguments.RemoveAt(0);
 
@@ -116,6 +108,8 @@
 
                     if (!hasIncorrectField)
                     {
+                        var song = songToUpdate;
+
                         if (!String.IsNullOrEmpty(title))
                         {
                             song.Title = title;
@@ -131,7 +125,7 @@
                             song.ArtistsNames = artistsNames;
                         }
 
-                        this.SaveChanges(songs);
+                        songRepository.Update(song);
 
                         Console.WriteLine(Messages.SongUpdated(song.Title));
                     }
@@ -143,11 +137,11 @@
         {
             if (Validator.IsInteger(arguments[0], out int id, "Id"))
             {
-                var songs = this.Context.GetSongs();
+                var songs = songRepository.GetAll();
 
                 if (Validator.SongExists(id, songs, out Song song))
                 {
-                    var playlists = this.Context.GetPlaylists();
+                    var playlists = playlistRepository.GetAll();
 
                     foreach (var playlist in playlists)
                     {
@@ -157,9 +151,7 @@
                         }
                     }
 
-                    songs.Remove(song);
-
-                    this.SaveChanges(songs, playlists);
+                    songRepository.Delete(song);
 
                     Console.WriteLine(Messages.SongDeleted(song.Title));
                 }
