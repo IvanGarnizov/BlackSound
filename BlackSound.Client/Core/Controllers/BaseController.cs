@@ -43,6 +43,7 @@
                     Id = 1,
                     Name = "All Songs",
                     Description = "All songs on Black Sound",
+                    IsPublic = true,
                     UserId = 1
                 };
 
@@ -54,9 +55,15 @@
                     Title = "a",
                     Year = 1,
                     ArtistsNames = new List<string>()
+                    {
+                        "a",
+                        "b"
+                    }
                 };
 
                 songRepository.Insert(song);
+                allSongsPlaylist.SongIds.Add(song.Id);
+                playlistRepository.Update(allSongsPlaylist);
             }
         }
     }

@@ -1,6 +1,5 @@
 ﻿namespace BlackSound.Data.Repositories
 {
-    using System.Collections.Generic;
     using System.Linq;
 
     using Models;
@@ -16,6 +15,8 @@
         {
             modelToUpdate.Name = model.Name;
             modelToUpdate.Description = model.Description;
+            modelToUpdate.IsPublic = model.IsPublic;
+            modelToUpdate.SongIds = model.SongIds;
         }
 
         public Playlist GetByNameAndStatus(string name)
@@ -24,18 +25,10 @@
                 .FirstOrDefault(p => p.Name == name && p.IsPublic);
         }
 
-        public void AddSong(List<Playlist> playlists, int playlistId, int songId)
+        public Playlist GetMasterPlaylist()
         {
-            var playlist = playlists
-                .First(p => p.Id == playlistId);
-
-            playlist.SongIds.Add(songId);
-            
-        }
-
-        public void RemoveFromPlaylists(Playlist playlist)
-        {
-
+            return GetAll()
+                .First(p => p.Name == "All Songs");
         }
     }
 }

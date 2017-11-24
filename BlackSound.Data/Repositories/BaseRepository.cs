@@ -53,9 +53,11 @@
             SaveChanges(models);
         }
 
-        public void Delete(T model)
+        public void Delete(int id)
         {
             var models = GetAll();
+            var model = models
+                .FirstOrDefault(m => m.Id == id);
             
             models.Remove(model);
             SaveChanges(models);

@@ -129,7 +129,7 @@
 
                 if (Validator.PlaylistExistsId(id, userId, playlists, out Playlist playlist))
                 {
-                    playlistRepository.Delete(playlist);
+                    playlistRepository.Delete(id);
 
                     Console.WriteLine(Messages.PlaylistDeleted(playlist.Name));
                 }

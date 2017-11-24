@@ -16,9 +16,9 @@
 
         public Engine()
         {
-            this.songsController = new SongsController();
-            this.playlistsController = new PlaylistsController();
-            this.usersController = new UsersController();
+            songsController = new SongsController();
+            playlistsController = new PlaylistsController();
+            usersController = new UsersController();
         }
 
         public void Run()
@@ -37,11 +37,11 @@
                 switch (command)
                 {
                     case "CreateSong":
-                        if (this.IsAdmin())
+                        if (IsAdmin())
                         {
                             if (arguments.Count == 3)
                             {
-                                this.songsController.Create(arguments);
+                                songsController.Create(arguments);
                             }
                             else
                             {
@@ -55,11 +55,11 @@
 
                         break;
                     case "ReadSongs":
-                        if (this.IsAdmin())
+                        if (IsAdmin())
                         {
                             if (arguments.Count == 0)
                             {
-                                this.songsController.Read();
+                                songsController.Read();
                             }
                             else
                             {
@@ -73,11 +73,11 @@
 
                         break;
                     case "UpdateSong":
-                        if (this.IsAdmin())
+                        if (IsAdmin())
                         {
                             if (1 < arguments.Count && arguments.Count <= 4)
                             {
-                                this.songsController.Update(arguments);
+                                songsController.Update(arguments);
                             }
                             else
                             {
@@ -91,11 +91,11 @@
 
                         break;
                     case "DeleteSong":
-                        if (this.IsAdmin())
+                        if (IsAdmin())
                         {
                             if (arguments.Count == 1)
                             {
-                                this.songsController.Delete(arguments);
+                                songsController.Delete(arguments);
                             }
                             else
                             {
@@ -109,11 +109,11 @@
 
                         break;
                     case "CreatePlaylist":
-                        if (this.IsLoggedIn())
+                        if (IsLoggedIn())
                         {
                             if (arguments.Count == 2)
                             {
-                                this.playlistsController.Create(arguments, this.usersController.CurrentUser.Id);
+                                playlistsController.Create(arguments, usersController.CurrentUser.Id);
                             }
                             else
                             {
@@ -127,11 +127,11 @@
 
                         break;
                     case "ReadPlaylist":
-                        if (this.IsLoggedIn())
+                        if (IsLoggedIn())
                         {
                             if (arguments.Count == 1)
                             {
-                                this.playlistsController.Read(arguments);
+                                playlistsController.Read(arguments);
                             }
                             else
                             {
@@ -145,11 +145,11 @@
 
                         break;
                     case "UpdatePlaylist":
-                        if (this.IsLoggedIn())
+                        if (IsLoggedIn())
                         {
                             if (1 < arguments.Count && arguments.Count <= 3)
                             {
-                                this.playlistsController.Update(arguments, this.usersController.CurrentUser.Id);
+                                playlistsController.Update(arguments, usersController.CurrentUser.Id);
                             }
                             else
                             {
@@ -163,11 +163,11 @@
 
                         break;
                     case "DeletePlaylist":
-                        if (this.IsLoggedIn())
+                        if (IsLoggedIn())
                         {
                             if (arguments.Count == 1)
                             {
-                                this.playlistsController.Delete(arguments, this.usersController.CurrentUser.Id);
+                                playlistsController.Delete(arguments, usersController.CurrentUser.Id);
                             }
                             else
                             {
@@ -181,11 +181,11 @@
 
                         break;
                     case "SharePlaylist":
-                        if (this.IsLoggedIn())
+                        if (IsLoggedIn())
                         {
                             if (arguments.Count == 1)
                             {
-                                this.playlistsController.Share(arguments, this.usersController.CurrentUser.Id);
+                                playlistsController.Share(arguments, usersController.CurrentUser.Id);
                             }
                             else
                             {
@@ -200,11 +200,11 @@
 
                         break;
                     case "AddSongToPlaylist":
-                        if (this.IsLoggedIn())
+                        if (IsLoggedIn())
                         {
                             if (arguments.Count == 2)
                             {
-                                this.playlistsController.AddSong(arguments, this.usersController.CurrentUser.Id);
+                                playlistsController.AddSong(arguments, usersController.CurrentUser.Id);
                             }
                             else
                             {
@@ -218,11 +218,11 @@
 
                         break;
                     case "RemoveSongFromPlaylist":
-                        if (this.IsLoggedIn())
+                        if (IsLoggedIn())
                         {
                             if (arguments.Count == 2)
                             {
-                                this.playlistsController.RemoveSong(arguments, this.usersController.CurrentUser.Id);
+                                playlistsController.RemoveSong(arguments, usersController.CurrentUser.Id);
                             }
                             else
                             {
@@ -236,11 +236,11 @@
 
                         break;
                     case "Register":
-                        if (!this.IsLoggedIn())
+                        if (!IsLoggedIn())
                         {
                             if (arguments.Count == 3)
                             {
-                                this.usersController.Register(arguments);
+                                usersController.Register(arguments);
                             }
                             else
                             {
@@ -254,11 +254,11 @@
 
                         break;
                     case "Login":
-                        if (!this.IsLoggedIn())
+                        if (!IsLoggedIn())
                         {
                             if (arguments.Count == 2)
                             {
-                                this.usersController.Login(arguments);
+                                usersController.Login(arguments);
                             }
                             else
                             {
@@ -272,11 +272,11 @@
 
                         break;
                     case "Logout":
-                        if (this.IsLoggedIn())
+                        if (IsLoggedIn())
                         {
                             if (arguments.Count == 0)
                             {
-                                this.usersController.Logout();
+                                usersController.Logout();
                             }
                             else
                             {
@@ -290,11 +290,11 @@
 
                         break;
                     case "CurrentUser":
-                        if (this.IsLoggedIn())
+                        if (IsLoggedIn())
                         {
                             if (arguments.Count == 0)
                             {
-                                Console.WriteLine(this.usersController.CurrentUser.Email);
+                                Console.WriteLine(usersController.CurrentUser.Email);
                             }
                             else
                             {
@@ -319,7 +319,7 @@
 
         private bool IsLoggedIn()
         {
-            if (this.usersController.CurrentUser != null)
+            if (usersController.CurrentUser != null)
             {
                 return true;
             }
@@ -329,7 +329,7 @@
 
         private bool IsAdmin()
         {
-            if (this.IsLoggedIn() && this.usersController.CurrentUser.IsAdministrator)
+            if (IsLoggedIn() && usersController.CurrentUser.IsAdministrator)
             {
                 return true;
             }

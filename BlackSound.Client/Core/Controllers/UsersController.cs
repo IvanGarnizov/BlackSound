@@ -67,11 +67,5 @@
 
             Console.WriteLine(Messages.UserLogout(currentUserEmail));
         }
-
-        public bool HasAdmin()
-        {
-            return userRepository.GetAll()
-                .Any(u => u.IsAdministrator);
-        }
     }
 }

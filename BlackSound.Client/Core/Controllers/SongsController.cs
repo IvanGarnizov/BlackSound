@@ -27,6 +27,11 @@
 
                 songRepository.Insert(song);
 
+                var allSongsPlaylist = playlistRepository.GetMasterPlaylist();
+
+                allSongsPlaylist.SongIds.Add(id);
+                playlistRepository.Update(allSongsPlaylist);
+
                 Console.WriteLine(Messages.SongCreated(title));
             }
         }
@@ -54,7 +59,7 @@
             {
                 var songs = songRepository.GetAll();
                 
-                if (Validator.SongExists(id, songs, out Song songToUpdate))
+                if (Validator.SongExists(id, songs, out Song song))
                 {
                     arguments.RemoveAt(0);
 
@@ -108,8 +113,6 @@
 
                     if (!hasIncorrectField)
                     {
-                        var song = songToUpdate;
-
                         if (!String.IsNullOrEmpty(title))
                         {
                             song.Title = title;
@@ -141,17 +144,16 @@
 
                 if (Validator.SongExists(id, songs, out Song song))
                 {
-                    var playlists = playlistRepository.GetAll();
+                    var playlists = playlistRepository.GetAll()
+                        .Where(p => p.SongIds.Contains(id));
 
                     foreach (var playlist in playlists)
                     {
-                        if (playlist.SongIds.Contains(id))
-                        {
-                            playlist.SongIds.Remove(id);
-                        }
+                        playlist.SongIds.Remove(id);
+                        playlistRepository.Update(playlist);
                     }
 
-                    songRepository.Delete(song);
+                    songRepository.Delete(id);
 
                     Console.WriteLine(Messages.SongDeleted(song.Title));
                 }
