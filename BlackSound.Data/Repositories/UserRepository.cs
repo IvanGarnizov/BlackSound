@@ -8,9 +8,5 @@
             : base(filePath)
         {
         }
-
-        protected override void UpdateModel(User modelToUpdate, User model)
-        {
-        }
     }
 }

@@ -11,14 +11,6 @@
         {
         }
 
-        protected override void UpdateModel(Playlist modelToUpdate, Playlist model)
-        {
-            modelToUpdate.Name = model.Name;
-            modelToUpdate.Description = model.Description;
-            modelToUpdate.IsPublic = model.IsPublic;
-            modelToUpdate.SongIds = model.SongIds;
-        }
-
         public Playlist GetByNameAndStatus(string name)
         {
             return GetAll()

@@ -12,13 +12,6 @@
         {
         }
 
-        protected override void UpdateModel(Song modelToUpdate, Song model)
-        {
-            modelToUpdate.Title = model.Title;
-            modelToUpdate.Year = model.Year;
-            modelToUpdate.ArtistsNames = model.ArtistsNames;
-        }
-
         public List<Song> GetForPlaylist(Playlist playlist)
         {
             var songs = new List<Song>();

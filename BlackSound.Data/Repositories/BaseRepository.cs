@@ -18,8 +18,6 @@
             this.filePath = filePath;
         }
 
-        protected abstract void UpdateModel(T modelToUpdate, T model);
-
         public List<T> GetAll()
         {
             if (File.Exists(filePath))
@@ -49,7 +47,13 @@
             var modelToUpdate = models
                 .FirstOrDefault(m => m.Id == model.Id);
 
-            UpdateModel(modelToUpdate, model);
+            foreach (var property in modelToUpdate.GetType().GetProperties())
+            {
+                var value = property.GetValue(model);
+
+                property.SetValue(modelToUpdate, value);
+            }
+
             SaveChanges(models);
         }
 
